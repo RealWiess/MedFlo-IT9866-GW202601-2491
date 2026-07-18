@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#export VERBOSE=1
+# ==========================================================================
+# export AUTOBACKUPCONFIG=1 if you want to backup the .config to the porject dir.
+# ==========================================================================
+export AUTOBACKUPCONFIG=0
+
+pushd ../../..
+source ./common.sh
+popd
+
+gnome-terminal

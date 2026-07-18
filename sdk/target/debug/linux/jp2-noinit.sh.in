@@ -1,0 +1,15 @@
+#!/bin/bash
+
+pushd ../../..
+source common.sh
+popd
+
+# Switch GPIO0~3 from SPI to JTAG Interface
+glamomem -t glamomem.dat -q -e "${PROJECT_SOURCE_DIR}/sdk/target/debug/win32/fa626/JTAG_Switch_32bits.txt"
+
+# Run openocd with the given configuration file
+openocd -f "${PROJECT_SOURCE_DIR}/sdk/target/debug/win32/fa626/fa626.cfg"
+
+if [ $? -ne 0 ]; then
+    read -p "Error occurred, press any key to continue..."
+fi

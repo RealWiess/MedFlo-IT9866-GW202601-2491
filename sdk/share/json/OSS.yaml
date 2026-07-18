@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'json-c'
+  oss_version: 'json-c-0.14-20200419'
+  download_location: 'https://github.com/json-c/json-c/archive/refs/tags/json-c-0.14-20200419.zip'
+  homepage: 'https://github.com/json-c/json-c/'
+  modified: true
+  license: 'MIT License (MIT)'
+  copyright_text: 'COPYING'

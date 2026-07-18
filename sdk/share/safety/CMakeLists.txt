@@ -1,0 +1,5 @@
+add_subdirectory_ifdef(CFG_BUILD_PKG_VERIFY pkg_verify)
+add_subdirectory_ifdef(CFG_BUILD_OTP_CHECK otp_check)
+add_subdirectory_ifdef(CFG_BUILD_SECURE_BOOT secure_boot)
+add_subdirectory_ifdef(CFG_BUILD_SECURE_DEBUG secure_debug)
+add_subdirectory_ifdef(CFG_BUILD_SIG_VERIFY sig_verify)

@@ -1,0 +1,209 @@
+add_library(curl STATIC)
+
+target_compile_definitions(curl
+PRIVATE
+    ALLOW_MSVC6_WITHOUT_PSDK
+    BUILDING_LIBCURL
+    HAVE_CONFIG_H
+)
+target_link_libraries(curl PRIVATE mbedtls)
+
+if (DEFINED CFG_DLM_ENABLE)
+    target_compile_options(curl
+    PRIVATE
+        "-fno-lto"
+    )
+endif()
+
+if (CMAKE_BUILD_TYPE STREQUAL Debug)
+    target_compile_definitions(curl
+    PRIVATE
+        CURLDEBUG
+        DEBUGBUILD
+    )
+endif()
+
+# http2 
+if (DEFINED CFG_BUILD_NGHTTP2)
+    target_link_libraries(curl 
+    PRIVATE 
+        nghttp2
+    )
+
+    target_include_directories(curl
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/sdk/share/nghttp2/lib/includes
+    )
+endif()
+
+target_include_directories(curl
+PRIVATE
+    .
+)
+
+target_sources(curl
+PRIVATE
+    altsvc.c
+    amigaos.c
+    asyn-ares.c
+    asyn-thread.c
+    base64.c
+    bufref.c
+    bufq.c
+    cf-h1-proxy.c
+    cf-haproxy.c
+    cf-https-connect.c
+    cfilters.c
+    cf-socket.c
+    conncache.c
+    connect.c
+    content_encoding.c
+    cookie.c
+    curl_addrinfo.c
+    curl_des.c
+    curl_endian.c
+    curl_fnmatch.c
+    curl_get_line.c
+    curl_gethostname.c
+    curl_gssapi.c
+    curl_memrchr.c
+    curl_multibyte.c
+    curl_ntlm_core.c
+    curl_range.c
+    curl_rtmp.c
+    curl_sasl.c
+    curl_sha512_256.c
+    curl_sspi.c
+    curl_trc.c
+    curl_threads.c
+    cw-out.c
+    dict.c
+    doh.c
+    dynbuf.c
+    dynhds.c
+    easy.c
+    easygetopt.c
+    easyoptions.c
+    escape.c
+    file.c
+    fileinfo.c
+    fopen.c
+    formdata.c
+    ftp.c
+    ftplistparser.c
+    getenv.c
+    getinfo.c
+    gopher.c
+    hash.c
+    headers.c
+    hmac.c
+    hostasyn.c
+    hostip.c
+    hostip4.c
+    hostip6.c
+    hostsyn.c
+    hsts.c
+    http.c
+    http1.c
+    http_aws_sigv4.c
+    http_chunks.c
+    http_digest.c
+    http_ntlm.c
+    http_chunks.c
+    http_digest.c
+    http_negotiate.c
+    http_ntlm.c
+    http_proxy.c
+    http2.c
+    idn.c
+    if2ip.c
+    imap.c
+    inet_ntop.c
+    inet_pton.c
+    krb5.c
+    ldap.c
+    llist.c
+    md4.c
+    md5.c
+    memdebug.c
+    mime.c
+    mprintf.c
+    mqtt.c
+    multi.c
+    netrc.c
+    nonblock.c
+    noproxy.c
+    openldap.c
+    parsedate.c
+    pingpong.c
+    pop3.c
+    progress.c
+    psl.c
+    rand.c
+    rename.c
+    request.c
+    rtsp.c
+    select.c
+    sendf.c
+    setopt.c
+    sha256.c
+    share.c
+    slist.c
+    smb.c
+    smtp.c
+    socks.c
+    socketpair.c
+    socks_gssapi.c
+    socks_sspi.c
+    speedcheck.c
+    splay.c
+    strcase.c
+    strdup.c
+    strerror.c
+    strparse.c
+    strtok.c
+    strtoofft.c
+    system_win32.c
+    telnet.c
+    tftp.c
+    timediff.c
+    timeval.c
+    transfer.c
+    url.c
+    urlapi.c
+    version.c
+    warnless.c
+    ws.c
+    vtls/bearssl.c
+    vtls/cipher_suite.c
+    vtls/hostcheck.c
+    vtls/keylog.c
+    vtls/rustls.c
+    vtls/sectransp.c
+    vtls/wolfssl.c
+    vtls/x509asn1.c
+    vtls/openssl.c
+    vtls/gtls.c
+    vtls/vtls.c
+    vtls/vtls_scache.c
+    vtls/mbedtls.c
+    vtls/mbedtls_threadlock.c
+    vtls/schannel.c
+    vtls/schannel_verify.c
+    vauth/cleartext.c
+    vauth/cram.c
+    vauth/digest.c
+    vauth/digest_sspi.c
+    vauth/krb5_gssapi.c
+    vauth/krb5_sspi.c
+    vauth/ntlm.c
+    vauth/ntlm_sspi.c
+    vauth/oauth2.c
+    vauth/spnego_gssapi.c
+    vauth/spnego_sspi.c
+    vauth/vauth.c
+    vssh/libssh.c
+    vssh/libssh2.c
+    vssh/wolfssh.c
+    vquic/vquic.c
+)

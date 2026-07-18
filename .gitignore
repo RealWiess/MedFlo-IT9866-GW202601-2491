@@ -1,0 +1,8 @@
+build/
+*.ROM
+*.PKG
+*.o
+*.obj
+*.d
+*.a
+tool/

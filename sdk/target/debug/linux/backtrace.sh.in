@@ -1,0 +1,11 @@
+#!/bin/bash
+
+pushd ../../..
+source common.sh
+popd
+
+read -p "Please Enter Back Trace Addresses: " addresses
+
+${ADDR2LINE} -f -p -s -e ${CMAKE_PROJECT_NAME} $addresses
+
+read -p "Press any key to continue..."

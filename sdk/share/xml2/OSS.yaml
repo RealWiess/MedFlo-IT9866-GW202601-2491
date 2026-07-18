@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'libxml2'
+  oss_version: 'v2.12.10'
+  download_location: 'https://gitlab.gnome.org/GNOME/libxml2/-/archive/v2.12.10/libxml2-v2.12.10.zip'
+  homepage: 'http://github.com/GNOME/libxml2/'
+  modified: true
+  license: 'MIT License (MIT)'
+  copyright_text: 'Copyright'

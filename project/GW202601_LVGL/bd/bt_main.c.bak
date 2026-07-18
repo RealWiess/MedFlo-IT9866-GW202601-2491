@@ -1,0 +1,294 @@
+/*
+ * bt_main.c
+ *
+ * BLE 初始化、廣播、GAP event 處理、IP 定期 Notify。
+ *
+ * main.c 呼叫方式（直接呼叫，不需自己建 thread）：
+ *
+ *   #ifdef CFG_BUILD_NIMBLE
+ *       nimbleInit();       // ← 內部自己建 thread，立即返回
+ *   #endif
+ *   ScreenInit();           // ← 正常繼續執行
+ *
+ * 依賴：
+ *   - bt_main.h, bt_gatt.h, bt_wifi.h
+ *   - nimble/ble.h, host/ble_hs.h, host/util/util.h
+ *   - ctrlboard.h (theConfig)
+ */
+
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <pthread.h>
+#include <unistd.h>
+
+#include "nimble/ble.h"
+#include "host/ble_hs.h"
+#include "host/util/util.h"
+#include "host/ble_gap.h"
+#include "services/gap/ble_svc_gap.h"
+#include "nimble/nimble_port.h"
+#include "modlog/modlog.h"
+
+#include "ctrlboard.h"
+#include "bt_main.h"
+#include "bt_gatt.h"
+#include "bt_wifi.h"
+#include "bt_led.h"
+
+/* ================================================================ */
+/*  前向宣告                                                         */
+/* ================================================================ */
+
+/* bt_advertise() 用到 bt_gap_event，但定義在後面，需要前向宣告 */
+static int bt_gap_event(struct ble_gap_event *event, void *arg);
+
+/* ================================================================ */
+/*  內部靜態變數                                                     */
+/* ================================================================ */
+
+static uint16_t s_conn_handle  = 0;
+static bool     s_notify_state = false;  /* Central 有沒有開啟 Notify 訂閱 */
+static bool     s_notify_run   = false;  /* IP notify thread 是否正在執行  */
+
+/* ================================================================ */
+/*  廣播（Advertising）                                              */
+/* ================================================================ */
+
+/*
+ * 廣播名稱格式：ITEY_ + MAC 6 bytes = "ITEY_XXXXXXXXXXXX"
+ * 用 MAC 結尾確保每台裝置名稱唯一。
+ */
+static void bt_advertise(void)
+{
+    struct ble_gap_adv_params adv_params;
+    struct ble_hs_adv_fields  fields;
+    uint8_t own_addr_type;
+    uint8_t mac[6];
+    char    name[32] = "ITEY_";
+    char    tmp[3]   = "";
+    int     rc;
+
+    rc = ble_hs_id_infer_auto(0, &own_addr_type);
+    if (rc != 0) {
+        MODLOG_DFLT(ERROR, "[bt_main] infer addr type failed: %d\n", rc);
+        return;
+    }
+
+    ble_hs_id_read_bd_addr(mac);
+    for (int i = 0; i < 6; i++) {
+        snprintf(tmp, sizeof(tmp), "%02X", mac[i]);
+        strcat(name, tmp);
+    }
+
+    memset(&fields, 0, sizeof(fields));
+    fields.flags                 = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
+    fields.tx_pwr_lvl_is_present = 1;
+    fields.tx_pwr_lvl            = BLE_HS_ADV_TX_PWR_LVL_AUTO;
+    fields.name                  = (uint8_t*)name;
+    fields.name_len              = strlen(name);
+    fields.name_is_complete      = 1;
+    fields.uuids16               = (ble_uuid16_t[]){ BLE_UUID16_INIT(0xAAAA) };
+    fields.num_uuids16           = 1;
+    fields.uuids16_is_complete   = 1;
+
+    rc = ble_gap_adv_set_fields(&fields);
+    if (rc != 0) {
+        MODLOG_DFLT(ERROR, "[bt_main] set adv fields failed: %d\n", rc);
+        return;
+    }
+
+    memset(&adv_params, 0, sizeof(adv_params));
+    adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
+    adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
+
+    rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER,
+                           &adv_params, bt_gap_event, NULL);
+    if (rc != 0) {
+        MODLOG_DFLT(ERROR, "[bt_main] adv start failed: %d\n", rc);
+        return;
+    }
+    printf("[bt_main] Advertising as \"%s\"\n", name);
+}
+
+/* ================================================================ */
+/*  IP Notify Thread                                                 */
+/* ================================================================ */
+
+/*
+ * 每 1 秒送一次目前 WiFi IP 給已訂閱的 Central（0xAAA1 Notify）。
+ */
+static void* bt_ip_notify_task(void *arg)
+{
+    while (1) {
+        usleep(1000 * 1000);
+
+        if (!s_notify_run || !s_notify_state)
+            continue;
+
+        char ip[16];
+        bt_wifi_get_ip(ip, sizeof(ip));
+
+        struct os_mbuf *om = ble_hs_mbuf_from_flat(ip, sizeof(ip));
+        if (om)
+            ble_gattc_notify_custom(s_conn_handle, g_ble_ip_handle, om);
+    }
+    return NULL;
+}
+
+/* ================================================================ */
+/*  GAP Event Handler                                                */
+/* ================================================================ */
+
+static int bt_gap_event(struct ble_gap_event *event, void *arg)
+{
+    struct ble_gap_conn_desc desc;
+    int rc;
+
+    printf("[bt_main] GAP event: %d\n", event->type);
+
+    switch (event->type) {
+
+    case BLE_GAP_EVENT_CONNECT:
+        MODLOG_DFLT(INFO, "[bt_main] Connection %s; status=%d\n",
+                    event->connect.status == 0 ? "established" : "failed",
+                    event->connect.status);
+        if (event->connect.status == 0) {
+            rc = ble_gap_conn_find(event->connect.conn_handle, &desc);
+            assert(rc == 0);
+            s_conn_handle = event->connect.conn_handle;
+            s_notify_run  = true;
+            bt_led_set_bt(BT_LED_STATE_CONNECTED);
+        } else {
+            //bt_advertise();
+            s_conn_handle = 0;
+            s_notify_run  = false;
+            bt_led_set_bt(BT_LED_STATE_ADV);
+        }
+        return 0;
+
+    case BLE_GAP_EVENT_DISCONNECT:
+        MODLOG_DFLT(INFO, "[bt_main] Disconnect; reason=%d\n",
+                    event->disconnect.reason);
+        s_notify_run   = false;
+        s_notify_state = false;
+        s_conn_handle  = 0;
+        bt_led_set_bt(BT_LED_STATE_ADV);
+        //bt_advertise();
+        return 0;
+
+    case BLE_GAP_EVENT_CONN_UPDATE:
+        MODLOG_DFLT(INFO, "[bt_main] Conn update; status=%d\n",
+                    event->conn_update.status);
+        return 0;
+
+    case BLE_GAP_EVENT_ADV_COMPLETE:
+        MODLOG_DFLT(INFO, "[bt_main] Adv complete; reason=%d\n",
+                    event->adv_complete.reason);
+        bt_advertise();
+        return 0;
+
+    case BLE_GAP_EVENT_SUBSCRIBE:
+        MODLOG_DFLT(INFO, "[bt_main] Subscribe; handle=%d cur_notify=%d\n",
+                    event->subscribe.attr_handle,
+                    event->subscribe.cur_notify);
+        if (event->subscribe.attr_handle == g_ble_ip_handle)
+            s_notify_state = event->subscribe.cur_notify;
+        return 0;
+
+    case BLE_GAP_EVENT_MTU:
+        MODLOG_DFLT(INFO, "[bt_main] MTU update; mtu=%d\n",
+                    event->mtu.value);
+        return 0;
+
+    case BLE_GAP_EVENT_ENC_CHANGE:
+        MODLOG_DFLT(INFO, "[bt_main] Enc change; status=%d\n",
+                    event->enc_change.status);
+        return 0;
+
+    case BLE_GAP_EVENT_REPEAT_PAIRING:
+        rc = ble_gap_conn_find(event->repeat_pairing.conn_handle, &desc);
+        assert(rc == 0);
+        ble_store_util_delete_peer(&desc.peer_id_addr);
+        return BLE_GAP_REPEAT_PAIRING_RETRY;
+
+    default:
+        return 0;
+    }
+}
+
+/* ================================================================ */
+/*  NimBLE Callbacks                                                 */
+/* ================================================================ */
+
+static void on_reset(int reason)
+{
+    MODLOG_DFLT(ERROR, "[bt_main] NimBLE reset; reason=%d\n", reason);
+}
+
+static void on_sync(void)
+{
+    int rc = ble_hs_util_ensure_addr(0);
+    assert(rc == 0);
+    bt_led_set_bt(BT_LED_STATE_ADV);
+    bt_advertise();
+}
+
+/* ================================================================ */
+/*  BLE 主執行緒（內部，阻塞）                                       */
+/* ================================================================ */
+
+static void* bt_ble_task(void *arg)
+{
+    int rc;
+
+    /* 1. 初始化 NimBLE port */
+    nimble_port_init();
+
+    /* 2. 設定 host callbacks */
+    ble_hs_cfg.reset_cb          = on_reset;
+    ble_hs_cfg.sync_cb           = on_sync;
+    ble_hs_cfg.gatts_register_cb = bt_gatt_register_cb;
+    ble_hs_cfg.store_status_cb   = ble_store_util_status_rr;//ble_store_util_status_rr //None
+
+    /* 3. 初始化 GATT server */
+    rc = bt_gatt_init();
+    assert(rc == 0);
+
+    /* 4. 啟動 IP Notify thread */
+    pthread_t      ip_tid;
+    pthread_attr_t ip_attr;
+    pthread_attr_init(&ip_attr);
+    pthread_attr_setdetachstate(&ip_attr, PTHREAD_CREATE_DETACHED);
+    pthread_attr_setstacksize(&ip_attr, 8 * 1024);
+    pthread_create(&ip_tid, &ip_attr, bt_ip_notify_task, NULL);
+
+    /* 5. 啟動 NimBLE event loop（阻塞，不會返回） */
+    nimble_port_run();
+
+    return NULL;
+}
+
+/* ================================================================ */
+/*  nimbleInit  — 對外唯一 entry point                              */
+/*                                                                   */
+/*  main.c 直接呼叫，內部建 thread 後立即返回：                      */
+/*    #ifdef CFG_BUILD_NIMBLE                                        */
+/*        nimbleInit();    ← 不會阻塞                               */
+/*    #endif                                                         */
+/*    ScreenInit();        ← 正常繼續                               */
+/* ================================================================ */
+
+void nimbleInit(void)
+{
+    pthread_t      bt_tid;
+    pthread_attr_t bt_attr;
+
+    pthread_attr_init(&bt_attr);
+    pthread_attr_setdetachstate(&bt_attr, PTHREAD_CREATE_DETACHED);
+    pthread_attr_setstacksize(&bt_attr, 32 * 1024);
+    pthread_create(&bt_tid, &bt_attr, bt_ble_task, NULL);
+
+    printf("[bt_main] BLE thread started\n");
+    /* 立即返回，main.c 繼續執行 ScreenInit() 等後續初始化 */
+}

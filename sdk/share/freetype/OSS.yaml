@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'freetype'
+  oss_version: 'VER-2-13-2'
+  download_location: 'https://github.com/freetype/freetype/archive/refs/tags/VER-2-13-2.zip'
+  homepage: 'https://github.com/freetype/freetype/'
+  modified: true
+  license: 'Freetype Project License (FTL)'
+  copyright_text: 'FTL.TXT'

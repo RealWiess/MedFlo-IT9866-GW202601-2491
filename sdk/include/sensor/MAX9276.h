@@ -1,0 +1,267 @@
+#ifndef __MAX9276_H__
+#define __MAX9276_H__
+
+#include "ite/itp.h"
+#include "ith/ith_defs.h"
+#include "ite/ith.h"
+#include "mmp_sensor.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define MAX9276_REG0                   0x00
+#define MAX9276_REG0_SERID_MASK        (N07_BITS_MSK << 1)
+#define MAX9276_REG0_SERID_SHIFT       1
+#define MAX9276_REG0_CFGBLOCK_MASK     (N01_BITS_MSK)
+#define MAX9276_REG0_CFGBLOCK_SHIFT    0
+
+#define MAX9276_REG1                   0x01
+#define MAX9276_REG1_DESID_MASK        (N07_BITS_MSK << 1)
+#define MAX9276_REG1_DESID_SHIFT       1
+
+#define MAX9276_REG2                   0x02
+#define MAX9276_REG2_SS_MASK           (N02_BITS_MSK << 6)
+#define MAX9276_REG2_SS_SHIFT          6
+#define MAX9276_REG2_AUDIMODE_MASK     (N01_BITS_MSK << 5)
+#define MAX9276_REG2_AUDIMODE_SHIFT    5
+#define MAX9276_REG2_AUDIOEN_MASK      (N01_BITS_MSK << 4)
+#define MAX9276_REG2_AUDIOEN_SHIFT     4
+#define MAX9276_REG2_PRNG_MASK         (N02_BITS_MSK << 2)
+#define MAX9276_REG2_PRNG_SHIFT        2
+#define MAX9276_REG2_SPRNG_MASK        (N02_BITS_MSK)
+#define MAX9276_REG2_SPRNG_SHIFT       0
+
+#define MAX9276_REG3                   0x03
+#define MAX9276_REG3_AUTOFM_MASK       (N02_BITS_MSK << 6)
+#define MAX9276_REG3_AUTOFM_SHIFT      6
+#define MAX9276_REG3_SDIV_MASK         (N05_BITS_MSK)
+#define MAX9276_REG3_SDIV_SHIFT        0
+
+#define MAX9276_REG4                   0x04
+#define MAX9276_REG4_LOCKED_MASK       (N01_BITS_MSK << 7)
+#define MAX9276_REG4_LOCKED_SHIFT      7
+#define MAX9276_REG4_OUTENB_MASK       (N01_BITS_MSK << 6)
+#define MAX9276_REG4_OUTENB_SHIFT      6
+#define MAX9276_REG4_PRBSEN_MASK       (N01_BITS_MSK << 5)
+#define MAX9276_REG4_PRBSEN_SHIFT      5
+#define MAX9276_REG4_SLEEP_MASK        (N01_BITS_MSK << 4)
+#define MAX9276_REG4_SLEEP_SHIFT       4
+#define MAX9276_REG4_INTTYPE_MASK      (N02_BITS_MSK << 2)
+#define MAX9276_REG4_INTTYPE_SHIFT     2
+#define MAX9276_REG4_REVCCEN_MASK      (N01_BITS_MSK << 1)
+#define MAX9276_REG4_REVCCEN_SHIFT     1
+#define MAX9276_REG4_FWDCCEN_MASK      (N01_BITS_MSK)
+#define MAX9276_REG4_FWDCCEN_SHIFT     0
+
+#define MAX9276_REG5                   0x05
+#define MAX9276_REG5_I2CMETHOD_MASK    (N01_BITS_MSK << 7)
+#define MAX9276_REG5_I2CMETHOD_SHIFT   7
+#define MAX9276_REG5_HPFTUNE_MASK      (N02_BITS_MSK << 5)
+#define MAX9276_REG5_HPFTUNE_SHIFT     5
+#define MAX9276_REG5_PDEQ_MASK         (N01_BITS_MSK << 4)
+#define MAX9276_REG5_PDEQ_SHIFT        4
+#define MAX9276_REG5_EQTUNE_MASK       (N04_BITS_MSK)
+#define MAX9276_REG5_EQTUNE_SHIFT      0
+
+#define MAX9276_REG6                   0x06
+#define MAX9276_REG6_DISSTAG_MASK      (N01_BITS_MSK << 7)
+#define MAX9276_REG6_DISSTAG_SHIFT     7
+#define MAX9276_REG6_AUTORST_MASK      (N01_BITS_MSK << 6)
+#define MAX9276_REG6_AUTORST_SHIFT     6
+#define MAX9276_REG6_DISGPI_MASK       (N01_BITS_MSK << 5)
+#define MAX9276_REG6_DISGPI_SHIFT      5
+#define MAX9276_REG6_GPIIN_MASK        (N01_BITS_MSK << 4)
+#define MAX9276_REG6_GPIIN_SHIFT       4
+#define MAX9276_REG6_GPIO1OUT_MASK     (N01_BITS_MSK << 3)
+#define MAX9276_REG6_GPIO1OUT_SHIFT    3
+#define MAX9276_REG6_GPIO1IN_MASK      (N01_BITS_MSK << 2)
+#define MAX9276_REG6_GPIO1IN_SHIFT     2
+#define MAX9276_REG6_GPIO0OUT_MASK     (N01_BITS_MSK << 1)
+#define MAX9276_REG6_GPIO0OUT_SHIFT    1
+#define MAX9276_REG6_GPIO0IN_MASK      (N01_BITS_MSK)
+#define MAX9276_REG6_GPIO0IN_SHIFT     0
+
+#define MAX9276_REG7                   0x07 //Reserved
+
+#define MAX9276_REG8                   0x08
+#define MAX9276_REG8_DISDEFILT_MASK    (N01_BITS_MSK << 2)
+#define MAX9276_REG8_DISDEFILT_SHIFT   2
+#define MAX9276_REG8_DISVSFILT_MASK    (N01_BITS_MSK << 1)
+#define MAX9276_REG8_DISVSFILT_SHIFT   1
+#define MAX9276_REG8_DISHSFILT_MASK    (N01_BITS_MSK)
+#define MAX9276_REG8_DISHSFILT_SHIFT   0
+
+#define MAX9276_REG9                   0x09 //Reserved
+#define MAX9276_REGA                   0x0A //Reserved
+#define MAX9276_REGB                   0x0B //Reserved
+
+#define MAX9276_REGC                   0x0C
+#define MAX9276_REGC_ERRTHR_MASK       (N08_BITS_MSK)
+#define MAX9276_REGC_ERRTHR_SHIFT      0
+
+#define MAX9276_REGD                   0x0D
+#define MAX9276_REGD_DECERR_MASK       (N08_BITS_MSK)
+#define MAX9276_REGD_DECERR_SHIFT      0
+
+#define MAX9276_REGE                   0x0E
+#define MAX9276_REGE_PRBSERR_MASK      (N08_BITS_MSK)
+#define MAX9276_REGE_PRBSERR_SHIFT     0
+
+#define MAX9276_REGF                   0x0F //Reserved
+#define MAX9276_REG10                  0x10 //Reserved
+
+#define MAX9276_REG11                  0x11
+#define MAX9276_REG11_REVFAST_MASK     (N01_BITS_MSK << 7)
+#define MAX9276_REG11_REVFAST_SHIFT    7
+
+#define MAX9276_REG12                  0x12
+#define MAX9276_REG12_MCLKSRC_MASK     (N01_BITS_MSK << 7)
+#define MAX9276_REG12_MCLKSRC_SHIFT    7
+#define MAX9276_REG12_MCLKDIV_MASK     (N07_BITS_MSK)
+#define MAX9276_REG12_MCLKDIV_SHIFT    0
+
+#define MAX9276_REG13                  0x13 //Reserved
+
+#define MAX9276_REG14                  0x14
+#define MAX9276_REG14_INVVSYNC_MASK    (N01_BITS_MSK << 7)
+#define MAX9276_REG14_INVVSYNC_SHIFT   7
+#define MAX9276_REG14_INVHSYNC_MASK    (N01_BITS_MSK << 6)
+#define MAX9276_REG14_INVHSYNC_SHIFT   6
+#define MAX9276_REG14_INVDE_MASK       (N01_BITS_MSK << 5)
+#define MAX9276_REG14_INVDE_SHIFT      5
+#define MAX9276_REG14_DRS_MASK         (N01_BITS_MSK << 4)
+#define MAX9276_REG14_DRS_SHIFT        4
+#define MAX9276_REG14_DCS_MASK         (N01_BITS_MSK << 3)
+#define MAX9276_REG14_DCS_SHIFT        3
+#define MAX9276_REG14_DISRWAKE_MASK    (N01_BITS_MSK << 2)
+#define MAX9276_REG14_DISRWAKE_SHIFT   2
+#define MAX9276_REG14_ES_MASK          (N01_BITS_MSK << 1)
+#define MAX9276_REG14_ES_SHIFT         1
+#define MAX9276_REG14_INTOUT_MASK      (N01_BITS_MSK)
+#define MAX9276_REG14_INTOUT_SHIFT     0
+
+#define MAX9276_REG15                  0x15
+#define MAX9276_REG15_AUTOINT_MASK     (N01_BITS_MSK << 7)
+#define MAX9276_REG15_AUTOINT_SHIFT    7
+#define MAX9276_REG15_HVTREN_MASK      (N01_BITS_MSK << 6)
+#define MAX9276_REG15_HVTREN_SHIFT     6
+#define MAX9276_REG15_DETREN_MASK      (N01_BITS_MSK << 5)
+#define MAX9276_REG15_DETREN_SHIFT     5
+#define MAX9276_REG15_HVTRMODE_MASK    (N01_BITS_MSK << 4)
+#define MAX9276_REG15_HVTRMODE_SHIFT   4
+#define MAX9276_REG15_MCLKWS_MASK      (N01_BITS_MSK << 1)
+#define MAX9276_REG15_MCLKWS_SHIFT     1
+#define MAX9276_REG15_MCLKPIN_MASK     (N01_BITS_MSK)
+#define MAX9276_REG15_MCLKPIN_SHIFT    0
+
+#define MAX9276_REG16                  0x16
+#define MAX9276_REG16_HIGHIMM_MASK     (N01_BITS_MSK << 7)
+#define MAX9276_REG16_HIGHIMM_SHIFT    7
+
+#define MAX9276_REG17                  0x17 //Reserved
+
+#define MAX9276_REG18                  0x18
+#define MAX9276_REG18_I2CSRCA_MASK     (N07_BITS_MSK << 1)
+#define MAX9276_REG18_I2CSRCA_SHIFT    1
+
+#define MAX9276_REG19                  0x19
+#define MAX9276_REG19_I2CDSTA_MASK     (N07_BITS_MSK << 1)
+#define MAX9276_REG19_I2CDSTA_SHIFT    1
+
+#define MAX9276_REG1A                  0x1A
+#define MAX9276_REG1A_I2CSRCB_MASK     (N07_BITS_MSK << 1)
+#define MAX9276_REG1A_I2CSRCB_SHIFT    1
+
+#define MAX9276_REG1B                  0x1B
+#define MAX9276_REG1B_I2CDSTB_MASK     (N07_BITS_MSK << 1)
+#define MAX9276_REG1B_I2CDSTB_SHIFT    1
+
+#define MAX9276_REG1C                  0x1C
+#define MAX9276_REG1C_I2CLOCACK_MASK   (N01_BITS_MSK << 7)
+#define MAX9276_REG1C_I2CLOCACK_SHIFT  7
+#define MAX9276_REG1C_I2CSLVSH_MASK    (N02_BITS_MSK << 5)
+#define MAX9276_REG1C_I2CSLVSH_SHIFT   5
+#define MAX9276_REG1C_I2CMSTBT_MASK    (N03_BITS_MSK << 2)
+#define MAX9276_REG1C_I2CMSTBT_SHIFT   2
+#define MAX9276_REG1C_I2CSLVTO_MASK    (N02_BITS_MSK)
+#define MAX9276_REG1C_I2CSLVTO_SHIFT   0
+
+#define MAX9276_REG1D                  0x1D
+#define MAX9276_REG1D_AUDUFBEH_MASK    (N01_BITS_MSK << 2)
+#define MAX9276_REG1D_AUDUFBEH_SHIFT   2
+#define MAX9276_REG1D_INVSCK_MASK      (N01_BITS_MSK << 1)
+#define MAX9276_REG1D_INVSCK_SHIFT     1
+#define MAX9276_REG1D_INVWS_MASK       (N01_BITS_MSK)
+#define MAX9276_REG1D_INVWS_SHIFT      0
+
+#define MAX9276_REG1E                  0x1E
+#define MAX9276_REG1E_ID_MASK          (N08_BITS_MSK)
+#define MAX9276_REG1E_ID_SHIFT         0
+
+#define MAX9276_REG1F                  0x1F
+#define MAX9276_REG1F_CAPS_MASK        (N01_BITS_MSK << 4)
+#define MAX9276_REG1F_CAPS_SHIFT       4
+#define MAX9276_REG1F_REVISION_MASK    (N04_BITS_MSK << 0)
+#define MAX9276_REG1F_REVISION_SHIFT   0
+
+#define MAX9276_REG77                  0x77 //Reserved
+
+#define MAX9276_REG78                  0x78
+#define MAX9276_REG78_AUDOUPER_MASK    (N08_BITS_MSK)
+#define MAX9276_REG78_AUDOUPER_SHIFT   0
+
+#define MAX9276_REG79                  0x79
+#define MAX9276_REG79_AUDOU_MASK       (N01_BITS_MSK << 7)
+#define MAX9276_REG79_AUDOU_SHIFT      7
+
+#define MAX9276_REG7B                  0x7B
+#define MAX9276_REG7B_LUTADDR_MASK     (N08_BITS_MSK)
+#define MAX9276_REG7B_LUTADDR_SHIFT    0
+
+#define MAX9276_REG7C                  0x7C
+#define MAX9276_REG7C_LUTPROG_MASK     (N01_BITS_MSK << 3)
+#define MAX9276_REG7C_LUTPROG_SHIFT    3
+#define MAX9276_REG7C_BLULUTEN_MASK    (N01_BITS_MSK << 2)
+#define MAX9276_REG7C_BLULUTEN_SHIFT   2
+#define MAX9276_REG7C_GRNLUTEN_MASK    (N01_BITS_MSK << 1)
+#define MAX9276_REG7C_GRNLUTEN_SHIFT   1
+#define MAX9276_REG7C_REDLUTEN_MASK    (N01_BITS_MSK)
+#define MAX9276_REG7C_REDLUTEN_SHIFT   0
+
+#define MAX9276_REG7D                  0x7D
+#define MAX9276_REG7D_REDLUT_MASK      (N08_BITS_MSK)
+#define MAX9276_REG7D_REDLUT_SHIFT     0
+
+#define MAX9276_REG7E                  0x7E
+#define MAX9276_REG7E_GREENLUT_MASK    (N08_BITS_MSK)
+#define MAX9276_REG7E_GREENLUT_SHIFT   0
+
+#define MAX9276_REG7F                  0x7F
+#define MAX9276_REG7F_BLUELUT_MASK     (N08_BITS_MSK)
+#define MAX9276_REG7F_BLUELUT_SHIFT    0
+
+typedef enum MAX9276_TIMING_ID_TAG
+{
+    MAX9276_HD720P_25FPS = 0,
+    MAX9276_HD720P_30FPS,
+} MAX9276_TIMING_ID_ID;
+
+//X10LightDriver_t1.h
+typedef struct Max9276SensorDriverStruct *Max9276SensorDriver;
+SensorDriver Max9276SensorDriver_Create();
+void Max9276SensorDriver_Destory(SensorDriver base);
+void Max9276Initialize(uint16_t Mode);
+void Max9276Terminate(void);
+void Max9276OutputPinTriState(uint8_t flag);
+uint16_t Max9276GetProperty(MODULE_GETPROPERTY property);
+uint8_t Max9276GetStatus(MODULE_GETSTATUS Status);
+void Max9276PowerDown(uint8_t enable);
+uint8_t Max9276IsSignalStable(uint16_t Mode);
+//end of X10LightDriver_t1.h
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

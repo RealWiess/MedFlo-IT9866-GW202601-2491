@@ -1,0 +1,41 @@
+add_library(mp3dec STATIC)
+
+target_include_directories(mp3dec
+PRIVATE
+    .
+    #${PROJECT_SOURCE_DIR}/sdk/include
+)
+
+target_sources(mp3dec
+PRIVATE
+    avfft.c
+    bitstream.c
+    #dct.c
+    #dct32.c
+    dct32_fixed.c
+    #dct32_float.c
+    fft.c
+    mdct.c
+    mdct_fixed.c
+    mdct_float.c
+    mpegaudio.c
+    mpegaudiodata.c
+    mpegaudiodec.c
+    mpegaudiodecheader.c
+    mpegaudiodsp.c
+    mpegaudiodsp_fixed.c
+    #mpegaudiodsp_float.c
+    mpegaudiodsp_template.c
+    rdft.c
+    libavutil/audioconvert.c
+    libavutil/avstring.c
+    libavutil/cpu.c
+    libavutil/dict.c
+    libavutil/error.c
+    libavutil/intfloat_readwrite.c
+    libavutil/log.c
+    libavutil/mathematics
+    libavutil/mem.c
+    libavutil/samplefmt.c
+    libavutil/rational.c
+)

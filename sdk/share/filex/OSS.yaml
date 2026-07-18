@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'filex'
+  oss_version: '6.4.0'
+  download_location: 'https://github.com/azure-rtos/filex/archive/refs/tags/v6.4.0_rel.zip'
+  homepage: 'https://github.com/azure-rtos/filex/'
+  modified: true
+  license: 'MIT License (MIT)'
+  copyright_text: 'OSS_LICENSE.txt'

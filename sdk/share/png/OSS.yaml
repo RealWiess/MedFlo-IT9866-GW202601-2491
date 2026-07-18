@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'libpng'
+  oss_version: 'v1.6.49'
+  download_location: 'http://prdownloads.sourceforge.net/libpng/lpng1649.zip?download'
+  homepage: 'http://www.libpng.org/pub/png/libpng.html'
+  modified: true
+  license: 'PNG Reference Library version 2 (libpng-2.0)'
+  copyright_text: 'OSS_LICENSE.txt'

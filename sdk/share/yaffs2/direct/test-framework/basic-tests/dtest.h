@@ -1,0 +1,2 @@
+int yaffs_main();
+

@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'curl'
+  oss_version: 'curl-8.12.1'
+  download_location: 'https://github.com/curl/curl/releases/download/curl-8_12_1/curl-8.12.1.zip'
+  homepage: 'https://github.com/curl/curl'
+  modified: true
+  license: 'curl License (curl)'
+  copyright_text: 'OSS_LICENSE.txt'

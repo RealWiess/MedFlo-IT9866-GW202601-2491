@@ -1,0 +1,10 @@
+#!/bin/bash
+
+pushd ../../..
+source common.sh
+popd
+
+export CFG_PROJECT=$ENV{CFG_PROJECT}
+export CFG_PLATFORM=$ENV{CFG_PLATFORM}
+export CFG_BUILDPLATFORM=$ENV{CFG_BUILDPLATFORM}
+code ${PROJECT_SOURCE_DIR}

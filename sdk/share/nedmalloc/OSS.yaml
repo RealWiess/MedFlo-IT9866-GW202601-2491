@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'nedmalloc'
+  oss_version: '1.10_beta3'
+  download_location: 'https://github.com/ned14/nedmalloc/archive/refs/tags/v1.10_beta3.zip'
+  homepage: 'https://github.com/ned14/nedmalloc/'
+  modified: true
+  license: 'Boost Software License 1.0 (BSL-1.0)'
+  copyright_text: 'OSS_LICENSE.txt'

@@ -1,0 +1,7 @@
+# ifndef HAVE_CONFIG_H
+# define HAVE_CONFIG_H
+
+#define FLAC__INTEGER_ONLY_LIBRARY
+
+#endif
+#define FLAC__INTEGER_ONLY_LIBRARY

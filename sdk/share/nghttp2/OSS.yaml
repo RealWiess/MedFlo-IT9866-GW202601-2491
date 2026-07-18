@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'nghttp2'
+  oss_version: 'nghttp2-1.31.0'
+  download_location: 'https://github.com/nghttp2/nghttp2/archive/refs/tags/v1.31.0.zip'
+  homepage: 'https://nghttp2.org/'
+  modified: true
+  license: 'The MIT License'
+  copyright_text: 'OSS_LICENSE.txt'

@@ -1,0 +1,9 @@
+---
+- source_path: 'matrix.h;state.h'
+  oss_name: 'Matrix_hub'
+  oss_version: '1.52'
+  download_location: 'https://github.com/Amoiensis/Matrix_hub/archive/v1.52.tar.gz'
+  homepage: 'https://github.com/Amoiensis/Matrix_hub/'
+  modified: true
+  license: 'Apache License 2.0 (Apache-2.0)'
+  copyright_text: 'LICENSE'

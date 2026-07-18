@@ -1,0 +1,119 @@
+/*
+ * LVDS PANEL Initialization Script
+ *
+ * Date            : 2024/12/26
+ * Chip Type       : IT9860
+ * Resolution      : 1920x720
+ * Color format    : RGB565
+ * PANEL interface : VESA 24-bits
+ * Build version   : PANEL initial script editor Ver. 0.0.0.378
+ * SHA1 hash       : a1bb6f2183bfce2080db69622dc1a194c9c09a60
+ */
+
+/* ************************************************* */
+/*               Please don't remove!                */
+/* ************************************************* */
+/*@UEsDBBQAAAAIAFNTmlkdTDacpAYAAHMTAAALAAAAc2V0dGluZy5pbmm1WNtu2zgQfS/QfxD6lKJMw4sudgE9WBc7QR1XkNK0u21hKLaSGHVsr6ygzV/tN+yXLYcjSyPb2S6wWCUyyaPDmSFFDmf0JR0F316+GMdJviqW4XI9++478uWLcDQqVkWZL9PiTnGf7yHCF3uIPEAU9BrH59Fiu1nmT4OyyH3BpQ3gNQVdronpKFwv1+XV06bwTTPaVi0iAbkqauhyPS/QpKi4ebyr9Vytq3zpC+UYDefrMntaza4WD4XWapAgn31P1uXs3hcuIsNyvao60DVKcZVnWkUrRBqglSGVAagITcnicRidZ/eL2wrMMs3rphneLzZmPBdXfc+MUk9/qjVWejx//dkBhsvFxp+sVwWgiVab3xWm78dtUZ7Oi9vFqphrDdAjWawuH3/qudlyn8EVcBYIFkgWKBbYLHBY4LLAYyPORoKNJBspNrLZyGEjl408lnKWCpZKliqW2ix1WOqy1DsQL3w2jsLxeza+zn6bhGx8jkUUT/QP17fQt9S30retb0ffrr49fff03QeOIQJTAFUAVwBZAFsAXQBfQAcBPST0kEY29IC537NM+q/YKLn4YGvmdZQldSFMMZHmmeNh0cOibwqXYyGwkNgBu08QtJHpINNB0KllKixsLBwsXOxXd0emjUwbmTYy7ZqJltm9V+wfroNBKz1oxcS/+lP1X93+haIwgNccFXqPZkVVLVZ3uOG0+vBhzmlD4EIHw4wPeZj7dRuGZPZqvbCzolzky+Bx6/dObxbVtpaRheNkvczLRUV1vXzxJUw+fjOeIfl4MdzfO+PYwMRvKfVWtXTqTULELlZ661Swo6O8yv1WSMdHKdk+6Pgpu9eKahxPo+7hIV/Ng0VFwEg7rGz9WM6K1q21RoMNMBettsYyGcIMomA9nWdnyeko1wq+ll9Xs4e5xX8KYVlnZ1Z4GU2hxzshplxfQJgvnywhoWUoP/JFBe2HLTxsJahBV4IaTF2XWdKV7631raXfixGWV5rruqSfa/opd1qrMwyst6xAGlYgpzxk8M+Z0qtPkR7hM3UilfKxTjR4qMGbKoewHMIIkBFMpdcysI6MEKco5FNJLMB6zcBxhHocgtgoCEMhQ00lsRzrNcNGhv08A+c01HM6JFqGLSNCSyM+HdgDYsnAJnViVYR2R3Jqk5FhvWXFKDXm0yEXXAR8aPEh76nYti075oHwxMCSQhIlQzIEQevBvuFH6j3yomJiFpFvE5wTmYK8QjEg00gmA+0kw8NNEovd8CKLx9xVkfPfhheROjXXJcMjHOd/Gp7E9S0Ds/U5j4eWtS0qawPexbp5vL0tSuvJ8i1p8xMdMOSPy+qd9m6vj2+25+rxcE9tv+s4ZL91Pc8Iop2hrt0o+LZu5EMgEvsgehj7NZ60DYzgYHDhjMQnNCbCoOVTenKdvWZpdnIORXQSxa9/Gba0V5hNjkjXIZEJHNTzR76HoIegV4MYB3gYB3gYB3gYB3g9otbEMeqIZunvH+rNX3vJ+sgyp7aojxVyMOtjFhSYHMBoas/TvvO270F3wNvAnmOk3wXFMVDi2QZgNwvoy+ZB54T1pHmzgLfnt9hBhxkBoEeyAkM2B7Ro9GNcL7ndayCSISjZoG2ET0AS5bt2YzrK9HqNFpovNHpIztBiRKDtmDwB1NC8AVhNu54TEgL13AbubqMWobvIwMkk+5FvjHxsm6V0ld8si90+AdTG2NeuVx62sEjkLp6m0bWgIffkOfF6o6SfLybqDRanutCb8g0WpwaU+ExiS2BLYItji5/uRtOuaLPqdkv67MxsR8cyK9lKPnyKUwtB0bfSQntIcEGISGUlny6hXXfS3tJ43EgHUXjhKVCTjzx2at9XK9AM/kvGgYqaYbbj5UVyYcJeqBxmjAbtpsoAHW4OQA83RwBwtilmOhIP8y2VoJ35WM+Zb1vLHNNOgLurq0XI6hrHANMvCOKtyYUB3suHa6hd2tj56FcCeHD4paDu0E33DbWTuxvSwUcAw9vP6g314OuAQQ+/EBgJ+58BDHjwKaCdFR3E4/lHwyFBI0qKy2fqve5ZWveHcN85eszWmQCuLDSHeH5cCmjfZcTb1bGDBHpTszZ23hSbB4dBFxTHQEkUNH4I27uV13on1Lmd1X4jUtMEfiZMB7QJ/EyYdhq6Cr8aFYAKqHGo8elkt1jPM7MkIancVnlZWT8W1b11np02L/NqnHzGg8K0zrNpUhabvCy64O9Fue4iV2W+WHah+KdOAEWzzYo/HovVrAgft9X64TovTbL3N1BLAQIUABQAAAAIAFNTmlkdTDacpAYAAHMTAAALAAAAAAAAAAAAIAAAAAAAAABzZXR0aW5nLmluaVBLBQYAAAAAAQABADkAAADNBgAAAAA=@*/
+
+/* ************************************************* */
+/*               GPIO Mode0 Set/Clear                */
+/* ************************************************* */
+//GPIO65 Panel POWER //GPIO19 Reset
+//GPIO23 PWM
+WRITE(0xD1000008, 0x00080000);    // GPIO[31: 0] GPIO19 set dir output
+//WRITE(0xD1000008, 0x00880000);    // GPIO[31: 0] GPIO19, GPIO23 set dir output
+//WRITE(0xD1000108, 0x00000002);    // GPIO[95:64] GPIO65 set dir output
+//WRITE(0xD100010C, 0x00000002);    // GPIO[95:64] GPIO65 set high
+//Wait(10);
+//WRITE(0xD100000C, 0x00800000);    // GPIO[31: 0] GPIO23 set high
+Wait(15000);
+WRITE(0xD1000010, 0x00080000);    // GPIO[31: 0] GPIO19 clear
+Wait(15000);
+WRITE(0xD100000C, 0x00080000);    // GPIO[31: 0] GPIO19 set high
+Wait(10000);
+
+/* ************************************************* */
+/*    IT9860, LVDS Interface mode, Clock Setting     */
+/* ************************************************* */
+WRITE(0xD8000028, 0x002ac801);
+
+/* ************************************************* */
+/*              PLL3 ck3_n1, 0xD8000000              */
+/* ************************************************* */
+WRITE(0xD8000120, 0x20500A01);
+WRITE(0xD8000124, 0x80000000);
+WRITE(0xD8000124, 0xF3000000);
+wait(220);                        // IDLE 220
+WRITE(0xD8000124, 0x80000000);
+
+/* ************************************************* */
+/*            General Setting 0xd000_0000            */
+/* ************************************************* */
+WRITE(0xD0000000, 0x00000070);    // DRAM mode, dclk, Falling latch
+WRITE(0xD0000004, 0x0F7F0A60);    // SRC:RGB565, dst VESA 24-bits
+WRITE(0xD0000008, 0x02D00780);    // Layer1:W1920xH720
+WRITE(0xD000000C, 0x00000F00);    // pitch=1920 X 2=3840
+WRITE(0xD0000010, 0x00000000);    // baseA addr
+WRITE(0xD0000014, 0x00000000);    // baseB addr
+WRITE(0xD0000018, 0x00000000);    // baseC addr
+
+/* ************************************************* */
+/*                  Test Color Mode                  */
+/* ************************************************* */
+WRITE(0xD0000020, 0x000000FF);    // test color mode=0, None
+
+/* ************************************************* */
+/*             Port Setting 0xD000_0000              */
+/*    HS:32, HBP:32, HFP:64, VS:8, VBP:8, VFP:45     */
+/* ************************************************* */
+WRITE(0xD0000070, 0x00010300);    // ctg_reset_on
+wait(1);                          // 1 μs
+WRITE(0xD0000070, 0x00000300);    // ctg_reset_off
+
+WRITE(0xD0000070, 0x00000307);    // enable ctg 0 1 2
+WRITE(0xD0000074, 0x030D0800);    // HTotal=0x0800, VTotal=0x030D
+//CTG0(Hsync)
+WRITE(0xD0000078, 0x20010800);    // set0,p1, line x=HTotal,        y=1
+WRITE(0xD000007C, 0x10010020);    // set1,p2       x=HOR.SYNC TIME, y=1
+WRITE(0xD0000080, 0x00000000);    // set0,p3(0x0,0)
+WRITE(0xD0000084, 0x00000000);    // set0,p4(0x0,0)
+//CTG1(Vsync)
+WRITE(0xD0000088, 0x60010800);    // set0,p1 ,frame  x=HTotal, y=1
+WRITE(0xD000008C, 0x10090800);    // set1,p2         x=HTotal, y=VER.SYNC TIME+1
+WRITE(0xD0000090, 0x00000000);    // set0,p3(0x0,0)
+WRITE(0xD0000094, 0x00000000);    // set0,p4(0x0,0)
+//CTG2(DE)
+WRITE(0xD0000098, 0x10120040);    // set1,p1, line
+WRITE(0xD000009C, 0x22E207C0);    // set0,p2 x=HOR.SYNC TIME+HBP+Hor. display area y=(VER.SYNC TIME+1)+VBP+1+Ver. display area
+WRITE(0xD00000A0, 0x10120040);    // set1,p3
+WRITE(0xD00000A4, 0x22E207C0);    // set0,p4
+
+/* ************************************************* */
+/*                     LVDS PHY                      */
+/* ************************************************* */
+WRITE(0xD0D00000, 0x384085E4);    // PLLNS=28 0x1C, Pad Type=LVDS, [23:22]='01':LVDS,[8]:LDOPD
+WRITE(0xD0D00004, 0x01008064);    // PLLF=1, PLLMS=4
+WRITE(0xD0D0001C, 0x00040000);    // PLLCLKSEL=DCLK for LVDS
+WRITE(0xD0D00000, 0x394085E4);    // PLL ENABLE
+Wait(1);
+// Software reset
+WRITE(0xD0D00004, 0x015E8064);    // CLKEN,DATAEN
+WRITE(0xD0D00004, 0x015F8064);    // RESET
+WAIT(1);
+WRITE(0xD0D00004, 0x015E8064);    // normal
+WAIT(200);
+
+
+/* ************************************************* */
+/*                       LVDS                        */
+/* ************************************************* */
+WRITE(0xD00001C0, 0x23410631);    // Enable LVDS
+WRITE(0xD00001C8, 0x00000000);    // [4:0]P/N swap
+WAIT(35);
+
+/* ************************************************* */
+/*                   Enable PANEL                    */
+/* ************************************************* */
+WRITE(0xD000001C, 0x00000001);    // SyncEn
+wait(1); // IDLE 1                // 1 μs
+WRITE(0xD000001C, 0x00000003);    // SyncEn DisplayEn

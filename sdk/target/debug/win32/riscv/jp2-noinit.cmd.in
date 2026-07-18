@@ -1,0 +1,15 @@
+﻿@echo off
+
+pushd ..\..\..
+call common.cmd
+call $ENV{ANDESIGHT_ROOT_PATH}\ice\andes-iceman.bat
+popd
+
+rem glamomem -t glamomem.dat -i -q
+rem glamomem -t glamomem.dat -l ${CMAKE_PROJECT_NAME}.bin
+glamomem -t glamomem.dat -q -e ${PROJECT_SOURCE_DIR}/sdk/target/debug/riscv/JTAG_Switch_32bits.txt
+
+rem openocd -f ${PROJECT_SOURCE_DIR}/sdk/target/debug/fa626/fa626.cfg
+c:
+cd $ENV{ANDESIGHT_ROOT_PATH}\ice
+iceman -Z v5 -c 10 -p 3333 --target-cfg ${PROJECT_SOURCE_DIR}/sdk/target/debug/riscv/user_target_cfg_table.txt

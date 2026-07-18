@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "swuart.h": "c",
+        "ite_risc.h": "c"
+    }
+}

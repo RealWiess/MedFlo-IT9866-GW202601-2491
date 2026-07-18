@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'lwip-ftpd'
+  oss_version: 'ba93e8cf'
+  download_location: 'https://github.com/toelke/lwip-ftpd/archive/b/home/ichunlai/Downloads/lwip-ftpd-ba93e8cffa6b4b4bd8bf85d5f7676f51416db471/LICENSEa93e8cf.zip'
+  homepage: 'https://github.com/toelke/lwip-ftpd/'
+  modified: true
+  license: 'BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)'
+  copyright_text: 'LICENSE'

@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'mDNSResponder'
+  oss_version: 'mDNSResponder-320.10'
+  download_location: 'https://github.com/apple-oss-distributions/mDNSResponder/archive/refs/tags/mDNSResponder-320.10.zip'
+  homepage: 'https://github.com/apple-oss-distributions/mDNSResponder/'
+  modified: true
+  license: 'Apache License 2.0 (Apache-2.0)'
+  copyright_text: 'OSS_LICENSE.txt'

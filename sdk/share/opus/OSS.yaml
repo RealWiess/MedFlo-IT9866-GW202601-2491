@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'opus'
+  oss_version: 'v1.3.1'
+  download_location: 'https://github.com/xiph/opus/archive/refs/tags/v1.3.1.zip'
+  homepage: 'https://github.com/xiph/opus/'
+  modified: true
+  license: 'BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)'
+  copyright_text: 'OSS_LICENSE.txt'

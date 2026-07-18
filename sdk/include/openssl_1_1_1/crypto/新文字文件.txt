@@ -1,0 +1,8 @@
+add_definitions(-DDSO_DLFCN)
+add_definitions(-DHAVE_DLFCN_H)
+add_definitions(-DDSO_EXTENSION=".so")
+
+add_compile_options(-Wall)
+
+# 如果需要包含特定目錄
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/openssl/crypto)

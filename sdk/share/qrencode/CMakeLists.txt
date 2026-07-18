@@ -1,0 +1,26 @@
+add_library(qrencode STATIC)
+
+target_sources(qrencode
+PRIVATE
+    bitstream.c
+    bitstream.h
+    mask.c
+    mmask.c
+    mqrspec.c
+    qrencode.c
+    qrinput.c
+    qrspec.c
+    rsecc.c
+    split.c
+    qrenc.c
+    mask.h
+    mmask.h
+    mqrspec.h
+    qrencode.h
+    qrinput.h
+    qrspec.h
+    rsecc.h
+    split.h
+    qrenc.h
+    config.h
+)

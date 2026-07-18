@@ -1,0 +1,18 @@
+if (DEFINED CFG_AUDIO_ENABLE)
+
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_AACDEC aacdecode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_AC3DEC ac3decode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_AC3SPDIF ac3spdif)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_AMR amrcodec)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_EAC3DEC eac3decode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_MP3DEC mp3decode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_WAV wavcodec)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_WMADEC wmadecode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_FLACDEC flacdecode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_SBC sbccodec)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_AACENC aacencode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_MP2ENC mp2encode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_VORBISDEC vorbisdecode)
+    add_subdirectory_ifdef(CFG_AUDIO_CODEC_OPUSDEC opuscodec)
+
+endif()

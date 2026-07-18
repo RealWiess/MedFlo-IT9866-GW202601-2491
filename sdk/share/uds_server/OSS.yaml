@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'uds_server'
+  oss_version: 'REL1_2_Draft'
+  download_location: ''
+  homepage: ''
+  modified: true
+  license: 'commercial'
+  copyright_text: ''

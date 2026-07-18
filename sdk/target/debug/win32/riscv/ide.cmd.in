@@ -1,0 +1,7 @@
+@echo off
+
+set CFG_PROJECT=$ENV{CFG_PROJECT}
+pushd ..\..\..
+call common.cmd
+rem call $ENV{ANDES_TOOLCHAIN_ROOT_PATH}\..\cygwin-andes.bat
+call $ENV{ANDESIGHT_ROOT_PATH}\ide\AndeSight.exe

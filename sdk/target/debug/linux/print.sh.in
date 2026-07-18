@@ -1,0 +1,11 @@
+#!/bin/bash
+
+pushd ../../..
+source common.sh
+popd
+
+glamomem -t glamomem.dat -p
+
+if [ $? -ne 0 ]; then
+    read -p "Error occurred, press any key to continue..."
+fi

@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'redblack'
+  oss_version: '2d94ddc8bf1ea174104e0aa411368f4b92c93478'
+  download_location: 'https://github.com/jrockytop/redblack/archive/refs/heads/master.zip'
+  homepage: 'https://github.com/jrockytop/redblack/'
+  modified: true
+  license: 'BSD 4-Clause "Original" or "Old" License (BSD-4-Clause)'
+  copyright_text: 'OSS_LICENSE.txt'

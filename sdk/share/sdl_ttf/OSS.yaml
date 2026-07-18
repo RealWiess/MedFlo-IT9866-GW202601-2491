@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'SDL_ttf'
+  oss_version: 'release-2.0.12'
+  download_location: 'https://github.com/libsdl-org/SDL_ttf/archive/refs/tags/release-2.0.12.zip'
+  homepage: 'https://github.com/libsdl-org/SDL_ttf/'
+  modified: true
+  license: 'zlib License (Zlib)'
+  copyright_text: 'OSS_LICENSE.txt'

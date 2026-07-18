@@ -1,0 +1,5 @@
+if(DEFINED CFG_ATA6570)
+add_subdirectory(ATA6570)
+elseif(DEFINED CFG_TJA1145A)
+add_subdirectory(TJA1145A)
+endif()

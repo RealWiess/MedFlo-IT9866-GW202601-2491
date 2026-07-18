@@ -1,0 +1,299 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+
+mainmenu "Project Configuration"
+
+config AUTOMOTIVE_DISPLAY
+    bool
+    default y
+    select HAVE_LCD
+    select HAVE_GRAPHICS
+    select HAVE_AUDIO
+
+config CMAKE_SOURCE_DIR
+	string
+	option env="CMAKE_SOURCE_DIR"
+
+config RAM_SIZE
+    default "0x4000000"
+
+config RAM_INIT_SCRIPT
+    default "IT9860_396Mhz_DDR2_396Mhz.scr"
+
+config WATCHDOG_ENABLE
+    def_bool y
+
+config FONT_FILENAME
+    default "Roboto-Regular.ttf"
+
+config BACKLIGHT_ENABLE
+    def_bool y
+
+config BACKLIGHT_DUTY_CYCLES
+    default "5, 25, 40, 55, 65, 75, 82, 88, 92, 95"
+
+config BACKLIGHT_DEFAULT_DUTY_CYCLE
+    default "95"
+
+config ENABLE_ROTATE
+    def_bool y
+
+config LCD_ENABLE
+    def_bool y
+
+if !LCD_MULTIPLE
+
+config LCD_WIDTH
+    default "1200"
+
+config LCD_HEIGHT
+    default "1920"
+
+config LCD_PITCH
+    default "2560"
+
+config LCD_INIT_SCRIPT
+    default "LVDS_1280_480_VESA24bits_new.txt"
+
+endif
+
+config CMDQ_ENABLE
+    def_bool y
+
+config AUDIO_ENABLE
+    def_bool y
+    
+config SD0_ENABLE
+    def_bool y
+
+config FS_FAT
+    def_bool y
+
+config I2C0_ENABLE
+    def_bool y
+
+config I2S_ENABLE
+    def_bool y
+
+config I2S_SPDIF_ENABLE
+    def_bool n
+
+config UART1_ENABLE
+    def_bool y
+
+config TOUCH_ENABLE
+    def_bool y
+
+config NET_ENABLE
+    def_bool n
+
+config DEF_DBG_UART1
+    def_bool y
+
+config DEF_BUILD_DEBUG
+    def_bool y
+
+config SYSTEM_NAME
+    default "ITE Display Control Board"
+
+config WIN32_SIMULATOR
+    def_bool y
+
+config FFMPEG_ENC
+    def_bool y
+
+config FFMPEG_H264_SW
+    def_bool y
+
+config ITU_FT_CACHE_ENABLE
+    def_bool y
+
+config ITU_UCL_ENABLE
+    def_bool y
+
+config BUILD_AUDIO_MGR
+    def_bool y
+
+config BUILD_INIPARSER
+    def_bool y
+
+config BUILD_ITU
+    def_bool y
+
+config BUILD_SDL
+    def_bool y
+
+config BUILD_UPGRADE
+    def_bool y
+
+config BUILD_PYINPUT
+    def_bool y
+    
+config BUILD_QRENCODE
+    def_bool y
+
+config BUILD_JPEG
+    def_bool y    
+    
+#config BUILD_LEAF
+#    def_bool y
+    
+#config BUILD_LINPHONE
+#    def_bool y
+
+if NET_ENABLE
+
+config NET_ETHERNET
+    def_bool y
+
+config NET_HTTP
+    def_bool y
+
+config BUILD_MICROHTTPD
+    def_bool y
+
+config BUILD_XML2
+    def_bool y
+
+endif
+
+source "$CMAKE_SOURCE_DIR/sdk/Kconfig"
+
+######################################################################
+# Project Menu
+######################################################################
+menu "Display Control Board"
+
+    config CHECK_FILES_CRC_ON_BOOTING
+        bool "Checking files' CRC on booting time"
+        default n
+        help
+            Checking files' CRC on booting time
+        help_cht
+            開啟開機時檢查檔案 CRC 值的功能。
+        help_chs
+            开启开机时检查档案 CRC 值的功能。
+
+    config HW_VERSION
+        string "Hardware version"
+        default "V2"
+        help
+            Hardware version
+        help_cht
+            硬體版號。
+        help_chs
+            硬件版号。
+
+    config HW_TEST
+        bool "Enable hardware test"
+        default n
+        help
+            Enable hardware test
+        help_cht
+            開啟硬體測試功能。
+        help_chs
+            开启硬体测试功能。
+    config PLAY_DEMO_VIDEO
+        bool "Play demo video"
+        default n
+        help
+            Play demo video
+        help_cht
+            播放示範影片。
+        help_chs
+            播放示范影片。
+
+    config DEMO_MODE
+        bool "Enable Demo mode"
+        default n
+        help
+            Enable  demo function mode
+        help_cht
+            展示模式開關。
+        help_chs
+            展示模式开关。
+
+    config SCREENSHOT_ENABLE
+        bool "Screenshot is enabled or not"
+        default n
+        help
+            Screenshot is enabled or not
+        help_cht
+            開啟螢幕擷取功能。
+        help_chs
+            开启屏幕撷取功能。
+
+    config WEBSERVER_PORT
+        string "Web server port"
+        default "80"
+        help
+            Web server port
+        help_cht
+            網頁伺服器埠號。
+        help_chs
+            网页服务器埠号。
+
+    config ITU_PATH
+        string "ITU files path"
+        depends on !LCD_MULTIPLE
+        default "itu/1280x480Demo"
+        help
+            ITU files path
+        help_cht
+            ITU檔案路徑。
+        help_chs
+            ITU档案路径。
+
+    config UPGRADE_FTP_URL
+        string "Upgrade ftp URL"
+        default "ftp://192.168.1.1/ctrlboard/ITEPKG03.PKG"
+        help
+            Upgrade ftp URL
+        help_cht
+            網路更新F/W路徑。
+        help_chs
+            网络更新F/W路径。
+
+    config UPGRADE_GUI
+        bool "Upgrade by graphics display"
+        depends on !LCD_MULTIPLE
+        default n
+        help
+            Upgrade by graphics display
+        help_cht
+            圖形顯示更新。
+        help_chs
+            图形显示更新。
+
+    config AUTO_RUN
+        bool "Auto Run Enable"
+        default n
+        help
+            Auto Demo.
+        help_cht
+            自動展示模式。
+        help_chs
+            自动展示模式。
+
+    config AUTO_CHANGE_TYPE
+        bool "Auto Type Enable"
+        default n
+        help
+            Auto Demo with Change Type.
+        help_cht
+            自動展示切換儀表。
+        help_chs
+            自动展示切换仪表。 
+
+    config MIRROR_TEST
+        bool "Mirror Test"
+        default n
+        help
+            Mirror Test. 
+        help_cht
+            手機投屏測試
+        help_chs
+            手机投屏测试           
+endmenu

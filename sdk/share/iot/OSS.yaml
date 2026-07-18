@@ -1,0 +1,9 @@
+---
+- source_path: 'iot_socket.c'
+  oss_name: 'newlib'
+  oss_version: '3.0.0'
+  download_location: 'ftp://sourceware.org/pub/newlib/newlib-3.0.0.tar.gz'
+  homepage: 'https://sourceware.org/newlib/'
+  modified: true
+  license: 'BSD 4-Clause "New" or "Revised" License (	BSD-4-Clause)'
+  copyright_text: 'OSS_LICENSE.txt'

@@ -1,0 +1,7 @@
+@echo off
+
+pushd ..\..\..
+call common.cmd
+popd
+
+${CMAKE_OBJDUMP} -d ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME} > ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.s

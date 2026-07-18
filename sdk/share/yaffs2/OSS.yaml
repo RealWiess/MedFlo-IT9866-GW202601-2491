@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'yaffs2'
+  oss_version: '613a901a229e8a701c18f003dd0aee18453e0670'
+  download_location: 'http://www.aleph1.co.uk/gitweb/?p=yaffs2.git;a=snapshot;h=613a901a229e8a701c18f003dd0aee18453e0670;sf=tgz'
+  homepage: 'https://yaffs.net/'
+  modified: true
+  license: 'GNU General Public License, version 2'
+  copyright_text: 'OSS_LICENSE.txt'

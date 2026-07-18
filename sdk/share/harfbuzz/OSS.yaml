@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'harfbuzz'
+  oss_version: '8.2.2'
+  download_location: 'https://github.com/harfbuzz/harfbuzz/releases/download/8.2.2/harfbuzz-8.2.2.tar.xz'
+  homepage: 'https://github.com/harfbuzz/harfbuzz'
+  modified: true
+  license: 'MIT License (MIT)'
+  copyright_text: 'OSS_LICENSE.txt'

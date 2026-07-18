@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'tslib'
+  oss_version: '1.19'
+  download_location: 'https://github.com/libts/tslib/archive/refs/tags/1.19.zip'
+  homepage: 'http://www.tslib.org/'
+  modified: true
+  license: 'GNU Lesser General Public License v2.1 only (LGPL-2.1-only)'
+  copyright_text: 'OSS_LICENSE.txt'

@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'libjpeg-turbo'
+  oss_version: 'jpeg-8c'
+  download_location: 'https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/jpeg-8c.zip'
+  homepage: 'https://github.com/libjpeg-turbo/libjpeg-turbo/'
+  modified: true
+  license: 'Independent JPEG Group License (IJG)'
+  copyright_text: 'OSS_LICENSE.txt'

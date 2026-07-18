@@ -1,0 +1,11 @@
+@echo off
+
+pushd ..\..\..
+call common.cmd
+popd
+
+set PATH=D:\parasoft\cpptest\bin;%PATH%
+set CFG_PROJECT=$ENV{CFG_PROJECT}
+set CFG_PLATFORM=$ENV{CFG_PLATFORM}
+D:\parasoft\cpptest\cpptest.exe
+pause

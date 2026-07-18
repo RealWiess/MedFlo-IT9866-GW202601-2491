@@ -1,0 +1,10 @@
+@echo off
+
+pushd ..\..\..
+call common.cmd
+popd
+
+set CFG_PROJECT=$ENV{CFG_PROJECT}
+set CFG_PLATFORM=$ENV{CFG_PLATFORM}
+set CFG_BUILDPLATFORM=$ENV{CFG_BUILDPLATFORM}
+code -n ${PROJECT_SOURCE_DIR}

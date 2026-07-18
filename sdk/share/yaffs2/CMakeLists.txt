@@ -1,0 +1,44 @@
+add_library(yaffs2 STATIC)
+
+target_include_directories(yaffs2
+PRIVATE
+    ${PROJECT_SOURCE_DIR}/sdk/share/yaffs2
+    ${PROJECT_SOURCE_DIR}/sdk/share/yaffs2/direct
+    ${PROJECT_SOURCE_DIR}/sdk/include
+    ${PROJECT_SOURCE_DIR}/sdk/driver/itp
+)
+
+target_sources(yaffs2
+PRIVATE
+    direct/test-framework/basic-tests/dtest.c
+    direct/test-framework/nanddrv.c
+    direct/test-framework/nandsim.c
+    direct/test-framework/nandsim_file.c
+    direct/test-framework/nandstore_file.c
+    direct/test-framework/yaffs_fileem2k.c
+    direct/test-framework/yaffs_nand_drv.c
+    direct/test-framework/yaffs_nandsim_file.c
+    direct/test-framework/yaffs_osglue.c
+    direct/test-framework/yaffscfg2k.c
+    direct/yaffs_attribs.c
+    direct/yaffs_hweight.c
+    direct/yaffsfs.c
+    yaffs_allocator.c
+    #yaffs_attribs.c
+    yaffs_bitmap.c
+    yaffs_cache.c
+    yaffs_checkptrw.c
+    yaffs_ecc.c
+    yaffs_endian.c
+    yaffs_guts.c
+    yaffs_nameval.c
+    yaffs_nand.c
+    yaffs_packedtags1.c
+    yaffs_packedtags2.c
+    yaffs_summary.c
+    yaffs_tagscompat.c
+    yaffs_tagsmarshall.c
+    yaffs_verify.c
+    yaffs_yaffs1.c
+    yaffs_yaffs2.c
+)

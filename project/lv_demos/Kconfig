@@ -1,0 +1,160 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+
+mainmenu "Project Configuration"
+
+config LV_DEMOS
+    bool
+    default y
+    select HAVE_LCD
+    select HAVE_GRAPHICS
+
+config CMAKE_SOURCE_DIR
+    string
+    option env="CMAKE_SOURCE_DIR"
+
+config BACKLIGHT_ENABLE
+    def_bool y
+
+config LCD_ENABLE
+    def_bool y
+
+config ENABLE_ROTATE
+    def_bool y
+
+config LCD_WIDTH
+    default "1280"
+
+config LCD_HEIGHT
+    default "480"
+
+config LCD_PITCH
+    default "2560"
+
+config LCD_INIT_SCRIPT
+    default "IT9860_MIPI_TL068HWXH08_EK79030_480x1280_4LANE_byteclk53.txt"
+
+config LCD_TRIPLE_BUFFER
+    default n
+
+config BACKLIGHT_ENABLE
+    def_bool y
+
+config BACKLIGHT_DUTY_CYCLES
+    default "5, 25, 40, 55, 65, 75, 82, 88, 92, 95"
+
+config BACKLIGHT_DEFAULT_DUTY_CYCLE
+    default "95"
+
+config CMDQ_ENABLE
+    def_bool y
+
+config SPI_ENABLE
+    def_bool n
+
+config I2C1_ENABLE
+    def_bool y
+
+config GPIO_IIC1_CLK
+    default "62"
+
+config GPIO_IIC1_DATA
+    default "61"
+
+config TOUCH_ENABLE
+    def_bool y
+
+config TOUCH_MODULE
+    default "gt911"
+
+config TOUCH_X_MAX_VALUE
+    default "0x4FF"
+
+config TOUCH_Y_MAX_VALUE
+    default "0x1DF"
+
+config TOUCH_ADVANCE_CONFIG
+	def_bool y
+
+config TOUCH_SWAP_XY
+	def_bool y
+
+config GPIO_TOUCH_INT
+    default "60"
+
+config GPIO_TOUCH_RESET
+    default "59"
+
+config GPIO_TOUCH_WAKE
+    default "-1"
+
+config DEF_TOUCH_I2C1
+    def_bool y
+
+config TOUCH_INTR
+    def_bool y
+
+config GPIO_UART0_TX
+    default "4"
+
+config GPIO_UART0_RX
+    default "-1"
+
+config GPIO_LCD_PWR_EN
+    default "-1"
+
+config GPIO_BACKLIGHT_PWM
+    default "63"
+
+config DBG_INIT_SCRIPT
+    default "IT9860_396Mhz_DDR2_396Mhz.txt"
+
+config TSLIB_STATIC_CONF
+    def_bool y
+
+config BUILD_IT2D
+    def_bool y
+
+config BUILD_LVGL
+    def_bool y
+
+config BUILD_FREETYPE
+    def_bool y
+
+config BUILD_ZLIB
+    def_bool y
+
+source "$CMAKE_SOURCE_DIR/sdk/Kconfig"
+
+menu "LVGL Demos"
+
+choice
+    prompt "Demo App"
+    default DEMO_BENCHMARK
+
+config DEMO_WIDGETS
+    bool "DEMO_WIDGETS"
+
+config DEMO_BENCHMARK
+    bool "DEMO_BENCHMARK"
+
+config DEMO_STRESS
+    bool "DEMO_STRESS"
+
+config DEMO_KEYPAD_AND_ENCODER
+    bool "DEMO_KEYPAD_AND_ENCODER"
+
+config DEMO_MUSIC
+    bool "DEMO_MUSIC"
+
+config DEMO_RENDER
+    bool "DEMO_RENDER"
+
+config DEMO_VECTOR_GRAPHIC
+    bool "DEMO_VECTOR_GRAPHIC"
+
+endchoice
+
+endmenu

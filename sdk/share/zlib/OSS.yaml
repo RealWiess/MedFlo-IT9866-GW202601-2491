@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'zlib'
+  oss_version: '1.3.1'
+  download_location: 'https://github.com/madler/zlib/archive/refs/tags/v1.3.1.zip'
+  homepage: 'https://github.com/madler/zlib'
+  modified: true
+  license: 'zlib License (Zlib)'
+  copyright_text: 'OSS_LICENSE.txt'

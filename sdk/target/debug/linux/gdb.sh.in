@@ -1,0 +1,10 @@
+#!/bin/bash
+
+pushd ../../..
+source common.sh
+popd
+
+${GDB} -x ${PROJECT_SOURCE_DIR}/sdk/target/debug/win32/fa626/init-gdb ${CMAKE_PROJECT_NAME}
+if [ $? -ne 0 ]; then
+    read -p "Error occurred, press any key to continue..."
+fi

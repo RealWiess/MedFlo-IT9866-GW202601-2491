@@ -1,0 +1,18 @@
+#!/bin/bash
+
+pushd ../../..
+source common.sh
+popd
+
+# Load init script
+glamomem -t glamomem.dat -i -q
+
+# Load binary to RAM
+glamomem -t glamomem.dat -l ${CMAKE_PROJECT_NAME}.bin
+
+# Fire CPU
+glamomem -t glamomem.dat -R 0x00000001 -a 0xd8300000
+
+if [ $? -ne 0 ]; then
+    read -p "Error occurred, press any key to continue..."
+fi

@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'Tremor'
+  oss_version: '7c30a663'
+  download_location: 'https://gitlab.xiph.org/xiph/tremor/-/archive/master/tremor-master.zip'
+  homepage: 'https://wiki.xiph.org/index.php/Tremor'
+  modified: true
+  license: 'BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)'
+  copyright_text: 'OSS_LICENSE.txt'

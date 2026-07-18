@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Switch to the specified directory
+cd "${PROJECT_SOURCE_DIR}/build/$ENV{CFG_BUILDPLATFORM}/$ENV{CFG_PROJECT}/project/${CMAKE_PROJECT_NAME}"
+
+# Load init script
+glamomem -t glamomem.dat -i -q
+
+# Load binary to RAM
+glamomem -t glamomem.dat -l "${CMAKE_PROJECT_NAME}.bin"
+
+# Fire CPU
+glamomem -t glamomem.dat -R 0x00000001 -a 0xd8300000

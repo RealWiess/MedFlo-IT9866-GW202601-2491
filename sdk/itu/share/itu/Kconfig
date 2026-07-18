@@ -1,0 +1,217 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+
+if BUILD_ITU
+
+menu "itu"
+
+config ITU_ERR
+    bool "Error Log"
+    default y
+    help
+        Output error log.
+    help_cht
+        輸出錯誤訊息。
+    help_chs
+        输出错误讯息。
+
+config ITU_WARN
+    bool "Warning Log"
+    default y
+    help
+        Output warning log.
+    help_cht
+        輸出警告訊息。
+    help_chs
+        输出警告讯息。
+
+config ITU_INFO
+    bool "Information Log"
+    default y
+    help
+        Output information log.
+    help_cht
+        輸出資訊訊息。
+    help_chs
+        输出资讯讯息。
+
+config ITU_DBG
+    bool "Debug Log"
+    default n
+    help
+        Output debug log.
+    help_cht
+        輸出除錯訊息。
+    help_chs
+        输出侦错讯息。
+
+config ITU_LOAD
+    bool "Load Log"
+    default n
+    help
+        Output load log.
+    help_cht
+        輸出讀取訊息。
+    help_chs
+        输出读取讯息。
+
+config ITU_UPDATE
+    bool "Update Log"
+    default n
+    help
+        Output update log.
+    help_cht
+        輸出更新訊息。
+    help_chs
+        输出更新讯息。
+
+config ITU_DRAW
+    bool "Draw Log"
+    default n
+    help
+        Output draw log.
+    help_cht
+        輸出繪圖訊息。
+    help_chs
+        输出绘图讯息。
+
+config ITU_FT_CACHE_ENABLE
+    bool "FreeType cache enable"
+    default n
+    help
+        FreeType cache enable or not.
+    help_cht
+        開啟 FreeType 快取功能。
+    help_chs
+        开启 FreeType 快取功能。
+
+config ITU_FT_CACHE_SIZE
+    string "FreeType cache size"
+    depends on ITU_FT_CACHE_ENABLE
+    default "0x7D000"
+    help
+        FreeType cache size.
+    help_cht
+        設定 FreeType 快取大小。
+    help_chs
+        设定 FreeType 快取大小。
+
+#config ITU_LITE_MODE
+#    bool "ITU Lite mode enable"
+#    default n
+#    help
+#        ITU Lite mode enable or not.
+#    help_cht
+#        開啟 ITU 架構縮減功能。
+#    help_chs
+#        开启 ITU 架构缩减功能。
+
+config ITU_UCL_ENABLE
+    bool "Use software decompress"
+    default n
+    help
+        Use software decompress or not.
+    help_cht
+        使用軟體解壓縮功能。
+    help_chs
+        使用软件解压缩功能。
+
+config ITU_ASSERT_THREAD
+    bool "Assert thread"
+    default n
+    help
+        Assert call APIs on the same thread.
+    help_cht
+        開啟呼叫APIs時是否在同一執行緒的功能。
+    help_chs
+        开启呼叫的API时是否在同一执行绪的功能。
+
+config ITU_DECOMPRESS_SURFACE_INPLACE
+    bool "Decompress surface in place"
+    default n
+    help
+        Decompress surface in place to save memory.
+    help_cht
+        即時解壓縮圖片用以節省記憶體使用。
+    help_chs
+        即时解压缩图片用以节省內存使用。
+
+config ITU_FONT_SURFACE_CACHE
+    bool "Font surface cache pool"
+    default n
+    help
+        Font use surface pool as cache to draw quickly.
+    help_cht
+        開啟固定圖檔暫存來預存文字供重覆顯示使用。
+    help_chs
+        开启固定图档暂存来预存文字供重覆显示使用。
+
+config ITU_ARABICCONVERTER_SUPPORT
+    bool "Arabic Text Converter support"
+    default n
+    help
+        Text support Arabic usage.
+    help_cht
+        阿拉伯文支援使用。
+    help_chs
+        阿拉伯文支持使用。
+
+config ITU_HARFBUZZ_SUPPORT
+    bool "Harfbuzz shaping support"
+    depends on CHIP_FAMILY_IT9860 || CHIP_FAMILY_IT9830 && !CHIP_PKG_IT9832 && !CHIP_PKG_IT9833
+    default n
+    help
+        Text support Harfbuzz shaping usage.
+    help_cht
+        HARFBUZZ支援使用。
+    help_chs
+        HARFBUZZ支持使用。
+
+config ITU_NGPL
+    bool "non-GPL version"
+    default n
+    help
+        non-GPL version.
+    help_cht
+        non-GPL 版本。
+    help_chs
+        non-GPL 版本。
+
+endmenu
+
+config BUILD_FFMPEG
+    def_bool y if (BUILD_ITU && VIDEO_ENABLE && !ITU_NGPL)
+
+config BUILD_FREETYPE
+    def_bool y if BUILD_ITU
+
+config BUILD_HARFBUZZ
+    def_bool y if (BUILD_ITU && ITU_HARFBUZZ_SUPPORT)
+
+config BUILD_ITC
+    def_bool y if BUILD_ITU
+
+config BUILD_ITU_RENDERER
+    def_bool y if BUILD_ITU
+
+config BUILD_JPEG
+    def_bool y if (BUILD_ITU && !JPEG_HW_ENABLE)
+
+config BUILD_PNG
+    def_bool y if BUILD_ITU
+
+config BUILD_REDBLACK
+    def_bool y if BUILD_ITU
+
+config BUILD_UCL
+    def_bool y if (BUILD_ITU && ITU_UCL_ENABLE)
+
+config BUILD_SPEEDY
+    def_bool y if (BUILD_ITU && ITU_UCL_ENABLE)
+
+config BUILD_ZLIB
+    def_bool y if BUILD_ITU
+
+endif # BUILD_ITU

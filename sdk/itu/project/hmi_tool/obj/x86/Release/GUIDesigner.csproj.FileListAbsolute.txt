@@ -1,0 +1,11 @@
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.csprojResolveAssemblyReference.cache
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.DuplicateNamesForm.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.FormAutoGenITU.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.JpegQualityForm.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.MainForm.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.Properties.Resources.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.ResolutionForm.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.SearchForm.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.WidgetManual.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.WidgetManual.zh-CN.resources
+C:\公司\電子元件\ITE\IT986x\SDK\SDK_V2.4.9.1\ite_sdk\sdk\itu\project\hmi_tool\obj\x86\Release\GUIDesigner.csproj.GenerateResource.Cache

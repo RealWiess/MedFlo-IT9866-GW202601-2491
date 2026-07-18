@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'littlefs'
+  oss_version: '2.4.0'
+  download_location: 'https://github.com/littlefs-project/littlefs/archive/v2.4.0.zip'
+  homepage: 'https://github.com/littlefs-project/littlefs/'
+  modified: true
+  license: 'BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)'
+  copyright_text: 'LICENSE.md'

@@ -1,0 +1,11 @@
+@echo off
+
+pushd ..\..\..
+call common.cmd
+
+call $ENV{ANDESIGHT_ROOT_PATH}\ice\andes-iceman.bat
+popd
+
+rem ${GDB} -x ${PROJECT_SOURCE_DIR}/sdk/target/debug/fa626/init-gdb ${CMAKE_PROJECT_NAME}
+${GDB} -ex 'target remote :3333' -ex 'reset-and-hold' -ex 'load' ${CMAKE_PROJECT_NAME}
+if errorlevel 1 pause

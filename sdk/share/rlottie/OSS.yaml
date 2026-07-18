@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'rlottie'
+  oss_version: '0.2'
+  download_location: 'https://github.com/Samsung/rlottie/archive/v0.2.zip'
+  homepage: 'https://github.com/Samsung/rlottie/'
+  modified: true
+  license: 'MIT License (MIT)'
+  copyright_text: 'COPYING'

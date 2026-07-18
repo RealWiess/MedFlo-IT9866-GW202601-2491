@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'libmicrohttpd'
+  oss_version: '0.9.38'
+  download_location: 'https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-0.9.38.tar.gz'
+  homepage: 'https://www.gnu.org/software/libmicrohttpd/'
+  modified: true
+  license: 'GNU Lesser General Public License v2.1 or later (LGPL-2.1-or-later)'
+  copyright_text: 'OSS_LICENSE.txt'

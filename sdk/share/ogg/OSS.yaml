@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'ogg'
+  oss_version: 'v1.3.5'
+  download_location: 'https://github.com/xiph/ogg/archive/refs/tags/v1.3.5.zip'
+  homepage: 'http://github.com/xiph/ogg/'
+  modified: true
+  license: 'BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)'
+  copyright_text: 'COPYING'

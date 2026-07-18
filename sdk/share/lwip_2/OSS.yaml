@@ -1,0 +1,9 @@
+---
+- source_path: '.'
+  oss_name: 'lwip'
+  oss_version: 'STABLE-2_1_3_RELEASE'
+  download_location: 'https://github.com/lwip-tcpip/lwip/archive/refs/tags/STABLE-2_1_3_RELEASE.zip'
+  homepage: 'https://github.com/lwip-tcpip/lwip/'
+  modified: true
+  license: 'BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)'
+  copyright_text: 'OSS_LICENSE.txt'

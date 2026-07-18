@@ -1,0 +1,18 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+
+menu "stl"
+
+config BUILD_STL
+    bool "Enable IEC-60730 Class B Test"
+    default n
+    help
+        Enable IEC-60730 Class B Tes.
+    help_cht
+        啟用 IEC-60730 Class B 測試。
+    help_chs
+        开启 IEC-60730 Class B 测试。
+
+endmenu
