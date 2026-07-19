@@ -15,7 +15,7 @@ static ITUVideo *logoVideo = 0;
 static ITULayer *startUpLayer = 0;
 
 static int gShowDelayCnt = 0;
-static gInit = false;
+static bool gInit = false;
 
 static void LogoVideoOnStop(ITUVideo* video)
 {

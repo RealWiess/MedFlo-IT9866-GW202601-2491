@@ -23,6 +23,8 @@ typedef struct
     int arg2;
 } PeriCmd;
 
+void PeripheralInit(void);
+void PeripheralExit(void);
 int PeripheralReceive(PeriCmd *cmd);
 int PeripheralSend(PeriCmd *cmd);
 bool updatePeripheral(void);

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "lvgl-simulator": {
+      "command": "npx",
+      "args": ["lvgl-mcp-server"]
+    }
+  }
+}

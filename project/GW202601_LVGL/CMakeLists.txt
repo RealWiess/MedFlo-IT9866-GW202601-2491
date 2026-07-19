@@ -38,11 +38,11 @@ if (DEFINED CFG_MIRROR_TEST)
 )
 endif()
 
-if (DEFINED CFG_SARADC_ENABLE)
-	add_definitions(
-    -DCFG_SARADC_ENABLE="${CFG_SARADC_ENABLE}"
-)
-endif()
+#if (DEFINED CFG_SARADC_ENABLE)
+#	add_definitions(
+#    -DCFG_SARADC_ENABLE="${CFG_SARADC_ENABLE}"
+#)
+#endif()
 
 ITE_ADD_DEFINITIONS_IF_DEFINED(CFG_CHECK_FILES_CRC_ON_BOOTING)
 
@@ -339,6 +339,8 @@ if (DEFINED CFG_BTA_ENABLE)
         main.c
         scene.c
         scene_utility.c
+	        it2d_stub.c
+	        brotli_stub.c
         itp/network_func.c
         itp/network_main.c
         itp/network_wifi.c
@@ -392,17 +394,14 @@ endif()
         main.c
         scene.c
         scene_utility.c
-        bleLinkWiFi/test_BLE.c
-        bleLinkWiFi/gatt_svr.c
-        bleLinkWiFi/bleprph.h
-        bleLinkWiFi/misc.c
-        bleLinkWiFi/phy.c
+	        it2d_stub.c
+	        brotli_stub.c
     )
 	if (DEFINED CFG_NET_ENABLE)
         add_executable(${CMAKE_PROJECT_NAME}
-            itp//network_func.c
-            itp//network_main.c
-            itp//network_wifi.c
+            itp/network_func.c
+            itp/network_main.c
+            itp/network_wifi.c
             itp//nework_mirror.c
         )
     endif()
@@ -412,6 +411,8 @@ else()
         main.c
         scene.c
         scene_utility.c
+	        it2d_stub.c
+	        brotli_stub.c
     )
     if (DEFINED CFG_NET_ENABLE)
         add_executable(${CMAKE_PROJECT_NAME}

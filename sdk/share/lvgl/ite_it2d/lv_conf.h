@@ -12,7 +12,7 @@
 #define LV_CACHE_DEF_SIZE 1048576
 #define LV_IMAGE_HEADER_CACHE_DEF_CNT 8
 
-#define LV_USE_DRAW_ITE_IT2D 1
+#define LV_USE_DRAW_ITE_IT2D 0  /* Disabled: it2d driver not built */
 #define LV_ITE_IT2D_CACHE_SIZE (1024 * 1024 * 8)
 #define LV_ITE_IT2D_LRU_SIZE (1024 * 1024 * 4)
 

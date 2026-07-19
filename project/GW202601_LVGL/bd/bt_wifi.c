@@ -25,6 +25,9 @@
 #if defined(CFG_NET_WIFI_SDIO_VND_RTK)
 #   include "lwip/ip.h"
 #   include "wifi_conf.h"
+#   ifndef NET_IF_NUM
+#       define NET_IF_NUM 1
+#   endif
     extern struct netif xnetif[NET_IF_NUM];
     extern uint8_t* LwIP_GetIP(struct netif *pnetif);
 #endif

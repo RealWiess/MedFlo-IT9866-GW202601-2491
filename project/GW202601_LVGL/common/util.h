@@ -23,6 +23,7 @@ typedef struct _HundredInfo
 } HundredInfo;
 
 void reverseData(unsigned char* src, unsigned char* des, unsigned char len);
+void reverseData2(uint8_t* src, uint8_t len);
 uint32_t byteOrderReverse(const uint32_t* buf, size_t size);
 int splitHundred(HundredInfo *data);
 

@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "audio.h"
 #include "module_audio.h"
+#include "ctrlboard.h"
 #ifdef __OPENRTOS__
 #include "flower.h"
 #endif
@@ -44,7 +45,7 @@ int PlayAudio(int song) {
 #endif
 
     if (!isAudioPlaying) {
-        AudioPlayMusic(filepath[song], AudioPlayerPlayCallback);
+        AudioPlayMusic(filepath[song], (AudioPlayCallback)AudioPlayerPlayCallback);
 #ifdef _WIN32
         isAudioPlaying = false;
 #else

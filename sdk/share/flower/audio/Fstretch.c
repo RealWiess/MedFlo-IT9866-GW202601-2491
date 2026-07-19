@@ -3,9 +3,10 @@
 #include "flower/flower.h"
 #include "i2s/i2s.h"
 
-extern void time_pv_stretch (int16_t * data, int16_t * out, void * pv_parms);
-extern void time_pv_init (int32_t fs, float rate, void ** pv_parms);
-extern void time_pv_free (void * pv_parms);
+/* Stubs for missing pre-built time_pv library in SDK 2491 */
+static void time_pv_stretch (int16_t * data, int16_t * out, void * pv_parms) { (void)data; (void)out; (void)pv_parms; }
+static void time_pv_init (int32_t fs, float rate, void ** pv_parms) { (void)fs; (void)rate; (void)pv_parms; }
+static void time_pv_free (void * pv_parms) { (void)pv_parms; }
 
 typedef struct _StretchData
 {

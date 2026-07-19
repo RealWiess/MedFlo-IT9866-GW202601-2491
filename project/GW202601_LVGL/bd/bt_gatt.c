@@ -149,7 +149,7 @@ static int chr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
                          struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
     int rc;
-    const ble_uuid_t *uuid = ble_uuid_u16(ctxt->chr->uuid);
+    uint16_t uuid = ble_uuid_u16(ctxt->chr->uuid);
 
     /* ---- 0xAAA1：讀取目前 WiFi IP ---- */
     if (uuid == 0xAAA1) {

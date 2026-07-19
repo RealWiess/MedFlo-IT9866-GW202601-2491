@@ -52,7 +52,7 @@ void printListWidgetNode(WidgetNode_t* sPtr);
 
 static dictionary* canFmtIni;
 DBARRAY canCfgArray;
-uint32_t** canDataArray;
+uint32_t* canDataArray;
 size_t gCount;
 
 static void make_string(char* name, int len, char* key)
@@ -156,7 +156,7 @@ static void canFmtGrabber(WidgetNode_t* node, uint8_t* buf)
     DEBUG_PRINT(">> 0x%X\n", canDataArray[node->no]);
 }
 
-uint32_t** CanFmtParser(uint32_t canId, uint8_t* buf)
+uint32_t* CanFmtParser(uint32_t canId, uint8_t* buf)
 {
     size_t i = 0;
     CanbusFmt_t* pVertex = NULL;
@@ -298,7 +298,7 @@ void CanFmtInit(void)
         find_canfmt(canId, FI_MAX + i, name, len);
     }
     gCount = FI_MAX + i;
-    canDataArray = (uint32_t**)malloc(gCount * sizeof(uint32_t));
+    canDataArray = (uint32_t*)malloc(gCount * sizeof(uint32_t));
     if (!canDataArray) {
         printf("CanFmtInit: malloc failed for canDataArray (gCount=%zu)\n", gCount);
         return;

@@ -444,7 +444,7 @@ static void on_sync(void)
         sscanf(mac_str, "%02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX",
                &pub_addr[5], &pub_addr[4], &pub_addr[3],
                &pub_addr[2], &pub_addr[1], &pub_addr[0]);
-        ble_hs_id_set_pub(pub_addr);
+        ble_hs_id_set_rnd(pub_addr);
         printf("[bt_main] BLE public addr set to WiFi MAC: %s\n", mac_str);
     }
 

@@ -13,6 +13,9 @@
 
 #define TCP_MIRROR_FLOW 1
 #define SHOW_BITRATE 1
+
+/* Stub: not used in Gateway build */
+static inline void show_mirror_window(int w, int h) { (void)w; (void)h; }
 #define DROP_FRAME 1
 #ifdef TCP_MIRROR_FLOW
 #define RECV_BUF_LEN    512*1024
@@ -348,7 +351,7 @@ static void* tcp_mirror_task(void* arg)
     int k = 0;
     uint8_t  message[13] = {0x4F, 0x4B, 0x68, 0x01, 0xBC, 0x02, 0xBC, 0x02, 0x68, 0x01, 0x1E, 0xB8, 0x0B}; /*{OK,V_W,V_H,H_W,H_H,FPS,bps}*/
     //uint8_t  message[2] = {0x4F, 0x4B}; //return OK to APP
-    uint8_t  frame_cnt = 0, buf_end_data[16] = {NULL};
+    uint8_t  frame_cnt = 0, buf_end_data[16] = {0};
     uint8_t *recvBuf = (uint8_t*) malloc(RECV_BUF_LEN), *tmpBuf = (uint8_t*) malloc(TMP_BUF_LEN);
     uint32_t nal_tick = 0, sec_size = 0, recv_size = 0, w_idx = 0, r_idx = 0, remaining_size = 0, parse_size = 0, head_nal_size = 0, recv_nal_size = 0, ori_w = 0, ori_h = 0, enc_w = 0, enc_h = 0;
     bool     got_nal = false, mirror_start = false, first_Iframe_get = true;
@@ -1010,9 +1013,9 @@ void network_mirror_init(void)
     if(mirror_is_init)
     {
         //network_mirror_start();
-        return 0;
+        return;
     }
-    
+
     mirror_is_init = true;
     while(backup_recving)
         usleep(1000);
@@ -1021,7 +1024,7 @@ void network_mirror_init(void)
     
     struct sockaddr_in myaddr;
     int reuse = 1;
-    int nRecvBuf = 1 * 1024 * 1024;       //±µ¦¬½w¦s³]©w¦¨32k,Á×§K±¼«Ê¥]
+    int nRecvBuf = 1 * 1024 * 1024;       //ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½sï¿½]ï¿½wï¿½ï¿½32k,ï¿½×§Kï¿½ï¿½ï¿½Ê¥]
 
     struct sockaddr_in addr;
 
@@ -1029,7 +1032,7 @@ void network_mirror_init(void)
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(sockfd < 0){
         printf("Fail to create a socket.\n");
-        return 0;
+        return;
     }
 
     struct timeval timeout={0,1000};//1000us

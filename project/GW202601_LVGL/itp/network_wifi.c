@@ -2,9 +2,12 @@
 #include <sys/socket.h>
 #include <time.h>
 #include "ite/itp.h"
+#include "SDL/SDL.h"
 #include "iniparser/iniparser.h"
 #include "ctrlboard.h"
 #include "network_config.h"
+
+static int createTcpServerThread(void);
 #ifdef CFG_BUILD_NIMBLE
 #include "bd/bt_main.h"
 /* 只在全部服務穩定後才記錄 DC，避免開機過程的斷線也被計入 */
@@ -464,7 +467,7 @@ void* softapTcpServer(void* arg)
     printf("Server is ready to receive !!\n");
 
     while (1) {
-        if ((recfd = accept(socket_fd,(struct sockaddr_in *)&client_addr, &length)) <0) {
+        if ((recfd = accept(socket_fd,(struct sockaddr *)&client_addr, &length)) <0) {
             printf ("could not accept call-----------------------------------------");
             while(1);
             exit(1);

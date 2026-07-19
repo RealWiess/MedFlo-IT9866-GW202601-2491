@@ -1,8 +1,35 @@
-build/
-*.ROM
-*.PKG
+# Build artifacts (CMake in-source build)
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+cvd.csf
 *.o
 *.obj
-*.d
 *.a
-tool/
+*.exe
+
+# Build output directories
+build/
+project/*/CMakeCache.txt
+project/*/CMakeFiles/
+project/*/Makefile
+project/*/cmake_install.cmake
+project/*/cvd.csf
+project/*/data/
+project/*/lib/
+project/*/openrtos/
+project/*/project/
+project/*/sdk/
+
+# ROM / PKG in root (these are copied output)
+ITE_NOR.ROM
+ITEPKG03.PKG
+*.ROM
+*.PKG
+
+# IDE / OS
+.vs/
+.vscode/
+desktop.ini
+Thumbs.db

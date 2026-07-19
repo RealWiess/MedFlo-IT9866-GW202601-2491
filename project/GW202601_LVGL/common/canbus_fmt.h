@@ -23,7 +23,7 @@ typedef struct _WidgetNode {
     char bitH;
     char bitL;
     int len;
-    struct WidgetNode_t* next;
+    struct _WidgetNode* next;
 } WidgetNode_t;
 
 typedef struct _CanbusFmt {
@@ -32,7 +32,7 @@ typedef struct _CanbusFmt {
 } CanbusFmt_t;
 
 void CanFmtInit(void);
-uint32_t** CanFmtParser(uint32_t canId, uint8_t* buf);
+uint32_t* CanFmtParser(uint32_t canId, uint8_t* buf);
 size_t CanFmtNodeCnt(void);
 
 #endif

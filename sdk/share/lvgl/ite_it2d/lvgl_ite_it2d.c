@@ -3,6 +3,10 @@
 #include <lvgl.h>
 #include "lvgl_display.h"
 #include "../src/draw/ite_it2d/lv_draw_ite_it2d.h"
+
+#if !LV_USE_DRAW_ITE_IT2D
+static inline void lv_sys_cache_data_flush_range(void * addr, size_t size) { (void)addr; (void)size; }
+#endif
 #include "ite_itdcps.h"
 #include "ite_itdpu.h"
 #include "ite_itjpeg.h"
