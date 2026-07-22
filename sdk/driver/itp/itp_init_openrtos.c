@@ -240,7 +240,6 @@ void LoadDLModule(void)
         }
 
         ioctl(ITP_DEVICE_DECOMPRESS, ITP_IOCTL_EXIT, NULL);
-	}
 	free(content_buf);
 
     ithInvalidateICache();
@@ -339,7 +338,6 @@ void LoadDLModule(void)
         }
 
         ioctl(ITP_DEVICE_DECOMPRESS, ITP_IOCTL_EXIT, NULL);
-	}
 
 	ithInvalidateICache();
     memset(__dlm_bss_start, 0, __dlm_end - __dlm_bss_start);
@@ -897,12 +895,10 @@ void itpInit(void)
     itpRegisterDevice(ITP_DEVICE_WIFI, &itpDeviceWifi);
 
     #if defined(CFG_NET_WIFI_SDIO) && !defined (CFG_NET_WIFI_SDIO_POWER_ON_OFF_USER_DEFINED)
-	if(err == 0) {
+	
         #if defined(CFG_NET_WIFI_SDIO_VND_RTK)
         itpRegisterDevice(ITP_DEVICE_WIFI_NGPL, &itpDeviceWifiNgpl);
         #endif
-        ioctl(ITP_DEVICE_WIFI, ITP_IOCTL_INIT, NULL);
-	}
     #endif
 #endif
 

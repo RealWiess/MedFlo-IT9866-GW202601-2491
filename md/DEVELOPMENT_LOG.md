@@ -108,6 +108,27 @@
 
 ---
 
+## 2026-07-22 — IT2D 啟用 + 雙環 HMI + WiFi 移植
+
+### 重大突破：IT2D 硬體加速啟用
+* **根因**: `LV_USE_DRAW_ITE_IT2D` = 0 → `lvgl_init()` 被跳過 → display 未註冊
+* **修復**: `lv_conf.h` 設為 1, config 加 `CFG_BUILD_IT2D`/`CFG_BUILD_BROTLI`, CMakeLists 手動 link `it2d` `brotli`
+* **結果**: LCD 點亮，`lv_demo_widgets` 成功，BACKLIGHT_ON
+
+### 雙環 HMI
+* Splash (NMGW2601 logo, 3s) → Main HMI (arc rings + status panels + version)
+* 全部從零手寫 (`ui_screen.c/h`)
+
+### WiFi 移植
+* **SDIO 成功**: RTL8821CS @50MHz 4-bit
+* **WifiMgr 未解**: Init 始終返回 2
+* SDK bug 修復: `itp_init_openrtos.c:900` 未宣告 `err`
+
+### 最終 ROM
+* `gw_lvgl_test_20260722_235659.ROM` — 純 LVGL 顯示，無 WiFi，系統穩定
+
+---
+
 ## 開發規則
 1. 所有 SDK 2491 相關對話及開發記錄，均記錄於此檔案及 `md/` 目錄下
 2. 穩定版的文件在該目錄的 `md/` 下，兩個專案獨立記錄
