@@ -1,0 +1,26 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="glow_base" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur1" />
+            <feGaussianBlur stdDeviation="10" result="blur2" />
+            <feGaussianBlur stdDeviation="25" result="blur3" />
+            <feMerge>
+                <feMergeNode in="blur3" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="blur1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+                <linearGradient id="gradWifiErr" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ffaa00" />
+                    <stop offset="50%" stop-color="#ffdd55" />
+                    <stop offset="100%" stop-color="#cc8800" />
+                </linearGradient>
+            </defs>
+            <g transform="translate(250,250) rotate(135)">
+                <circle r="180" fill="none" stroke="url(#gradWifiErr)" stroke-width="14" 
+                        stroke-dasharray="848.2 282.7" stroke-linecap="round" filter="url(#glow_base)" />
+                <circle r="200" fill="none" stroke="#ffaa00" stroke-width="2" 
+                        stroke-dasharray="10 20" opacity="0.4" />
+            </g>
+        </svg>

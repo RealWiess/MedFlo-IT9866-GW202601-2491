@@ -1,0 +1,536 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medflo.wiess.biz/lvgl-ui-schema/v1",
+  "title": "LVGL UI Schema for IT9866 (IT2D GPU-accelerated)",
+  "description": "JSON Schema for designing LVGL UIs that compile directly to C code for IT9866/IT9868. Fully leverages IT2D 2.5D GPU for hardware-accelerated transforms, alpha blending, gradients, recolor, and compositing.",
+  "version": "1.0.0",
+
+  "definitions": {
+
+    "Color": {
+      "description": "Color in hex, rgba, or token reference (e.g. '{cyan_glow}')",
+      "type": "string",
+      "pattern": "^(#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{8}|rgba\\(\\d+,\\d+,\\d+,\\d*\\.?\\d+\\)|\\{[a-z_]+\\})$",
+      "examples": ["#00E5FF", "rgba(0,5,15,0.75)", "{cyan_glow}"]
+    },
+
+    "BlendMode": {
+      "type": "string",
+      "enum": ["normal", "additive", "subtractive", "multiply", "replace"],
+      "default": "normal"
+    },
+
+    "Easing": {
+      "type": "string",
+      "enum": ["linear", "ease_in", "ease_out", "ease_in_out", "bounce", "overshoot"],
+      "default": "ease_out"
+    },
+
+    "Alignment": {
+      "type": "string",
+      "enum": ["left", "center", "right", "top_left", "top_center", "top_right",
+               "bottom_left", "bottom_center", "bottom_right"]
+    },
+
+    "Rect": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "integer", "description": "X position (px)" },
+        "y": { "type": "integer", "description": "Y position (px)" },
+        "w": { "type": "integer", "minimum": 1, "description": "Width (px)" },
+        "h": { "type": "integer", "minimum": 1, "description": "Height (px)" }
+      },
+      "required": ["x", "y", "w", "h"]
+    },
+
+    "BaseStyle": {
+      "type": "object",
+      "properties": {
+        "radius":       { "type": "integer", "minimum": 0, "default": 0, "description": "Border radius (px)" },
+        "border":       { "$ref": "#/definitions/Border" },
+        "shadow":       { "$ref": "#/definitions/Shadow" },
+        "bg_color":     { "$ref": "#/definitions/Color" },
+        "bg_gradient":  { "$ref": "#/definitions/Gradient" },
+        "bg_opa":       { "type": "integer", "minimum": 0, "maximum": 255, "default": 255 },
+        "text_font":    { "type": "string", "description": "Font token, e.g. 'tech_16'" },
+        "text_color":   { "$ref": "#/definitions/Color" },
+        "text_align":   { "$ref": "#/definitions/Alignment", "default": "left" },
+        "text_line_space": { "type": "integer", "default": 0 },
+        "opa":          { "type": "integer", "minimum": 0, "maximum": 255, "default": 255, "description": "Overall opacity (0=transparent, 255=opaque). Uses IT2D hardware const_alpha." },
+        "blend_mode":   { "$ref": "#/definitions/BlendMode" },
+        "padding":      { "$ref": "#/definitions/Padding" },
+        "transform":    { "$ref": "#/definitions/Transform" }
+      }
+    },
+
+    "Border": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "integer", "minimum": 0, "default": 0 },
+        "color": { "$ref": "#/definitions/Color" },
+        "side":  { "type": "string", "enum": ["full", "top", "bottom", "left", "right"], "default": "full" }
+      }
+    },
+
+    "Shadow": {
+      "description": "Shadow/glow effect. Uses IT2D stack blur + hardware alpha composite.",
+      "type": "object",
+      "properties": {
+        "width":    { "type": "integer", "minimum": 0, "default": 0, "description": "Shadow spread width (px)" },
+        "color":    { "$ref": "#/definitions/Color" },
+        "offset_x": { "type": "integer", "default": 0 },
+        "offset_y": { "type": "integer", "default": 0 },
+        "blur":     { "type": "integer", "minimum": 0, "default": 0, "description": "Stack blur radius. Cache for performance." },
+        "cache":    { "type": "boolean", "default": true, "description": "Cache blurred shadow surface for performance" }
+      }
+    },
+
+    "Gradient": {
+      "description": "Hardware-accelerated gradient fill via IT2D ite_it2d_gradient_fill().",
+      "type": "object",
+      "properties": {
+        "start_color": { "$ref": "#/definitions/Color" },
+        "end_color":   { "$ref": "#/definitions/Color" },
+        "direction":   { "type": "string", "enum": ["horizontal", "vertical", "diagonal"], "default": "vertical" }
+      },
+      "required": ["start_color", "end_color"]
+    },
+
+    "Glow": {
+      "description": "Outer/inner glow effect. Implemented as gradient ring (outer) or gradient fill (inner) with alpha blending on IT2D hardware.",
+      "type": "object",
+      "properties": {
+        "radius": { "type": "integer", "minimum": 1, "description": "Glow spread radius (px)" },
+        "color":  { "$ref": "#/definitions/Color" },
+        "alpha":  { "type": "integer", "minimum": 0, "maximum": 255, "default": 180 },
+        "method": { "type": "string", "enum": ["gradient_ring", "gradient_fill", "stack_blur"], "default": "gradient_ring", "description": "gradient_ring=hardware gradient arc (fastest), stack_blur=software blur (cache recommended)" },
+        "cache":  { "type": "boolean", "default": true }
+      }
+    },
+
+    "Recolor": {
+      "description": "Hardware color remapping via IT2D fg_color + color_key. Apply a tint to a grayscale image without needing multiple PNG assets.",
+      "type": "object",
+      "properties": {
+        "color": { "$ref": "#/definitions/Color", "description": "Target tint color" },
+        "opa":   { "type": "integer", "minimum": 0, "maximum": 255, "default": 255, "description": "Recolor opacity (LV_OPA_COVER = full recolor)" }
+      },
+      "required": ["color"]
+    },
+
+    "Glass": {
+      "description": "Frosted glass / blur-behind effect. Uses stack blur on background region + hardware alpha blend overlay.",
+      "type": "object",
+      "properties": {
+        "blur_radius": { "type": "integer", "minimum": 1, "maximum": 50, "default": 8 },
+        "cache":       { "type": "boolean", "default": true, "description": "Cache blurred bg (required for performance)" },
+        "tint_color":  { "$ref": "#/definitions/Color", "description": "Color tint over blurred area" },
+        "tint_opa":    { "type": "integer", "minimum": 0, "maximum": 255, "default": 64 },
+        "border_glow": { "type": "boolean", "default": false }
+      }
+    },
+
+    "Padding": {
+      "type": "object",
+      "properties": {
+        "top":    { "type": "integer", "default": 0 },
+        "bottom": { "type": "integer", "default": 0 },
+        "left":   { "type": "integer", "default": 0 },
+        "right":  { "type": "integer", "default": 0 }
+      }
+    },
+
+    "Transform": {
+      "description": "Hardware affine transform via IT2D 3x3 matrix. All properties combined into a single GPU transform call.",
+      "type": "object",
+      "properties": {
+        "rotation":  { "type": "number", "description": "Rotation angle in degrees (0-360)" },
+        "scale_x":   { "type": "number", "minimum": 0.0625, "default": 1.0, "description": "Horizontal scale factor" },
+        "scale_y":   { "type": "number", "minimum": 0.0625, "default": 1.0, "description": "Vertical scale factor" },
+        "pivot_x":   { "type": "integer", "description": "Transform pivot X (px, relative to center)" },
+        "pivot_y":   { "type": "integer", "description": "Transform pivot Y (px, relative to center)" },
+        "interpolation": { "type": "boolean", "default": true, "description": "Enable IT2D bilinear interpolation (smooth)" }
+      }
+    },
+
+    "Animation": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["rotation", "scale", "alpha_pulse", "position", "value", "color_transition", "sequential"],
+          "description": "Animation type"
+        },
+        "property": { "type": "string", "description": "Target property name" },
+        "from":     { "description": "Start value (number or string)" },
+        "to":       { "description": "End value (number or string)" },
+        "duration_ms": { "type": "integer", "minimum": 1, "description": "Animation duration in milliseconds" },
+        "delay_ms":    { "type": "integer", "default": 0 },
+        "ease":        { "$ref": "#/definitions/Easing" },
+        "loop":        { "type": "boolean", "default": false },
+        "loop_count":  { "type": "integer", "default": 0, "description": "0 = infinite" },
+        "reverse":     { "type": "boolean", "default": false, "description": "Ping-pong reverse" },
+        "playback_time_ms": { "type": "integer" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Animation" },
+          "description": "Sub-animations for 'sequential' type"
+        }
+      },
+      "required": ["type", "duration_ms"]
+    },
+
+    "ImageSource": {
+      "type": "object",
+      "properties": {
+        "file":           { "type": "string", "description": "PNG/JPG file path relative to project" },
+        "format":         { "type": "string", "enum": ["rgba8888", "rgb565", "alpha8", "alpha4", "alpha2", "alpha1"], "default": "rgb565", "description": "GPU surface format" },
+        "chroma_keyed":   { "type": "boolean", "default": false, "description": "Use hardware color key for transparency" },
+        "chroma_color":   { "$ref": "#/definitions/Color", "default": "#FF00FF", "description": "Chroma key color (default magenta)" },
+        "gpu_managed":    { "type": "boolean", "default": true, "description": "Keep as IT2D surface (fast) vs CPU buffer" },
+        "compress":       { "type": "boolean", "default": false, "description": "Use LVGL compressed image format" },
+        "dither":         { "type": "boolean", "default": false, "description": "IT2D hardware dithering (smoother 16-bit gradients)" },
+        "recolorable":    { "type": "boolean", "default": false, "description": "Mark image as recolorable (grayscale source recommended)" }
+      },
+      "required": ["file"]
+    },
+
+    "Event": {
+      "type": "object",
+      "properties": {
+        "trigger": {
+          "type": "string",
+          "enum": ["on_click", "on_press", "on_release", "on_long_press", "on_value_change",
+                   "on_focus", "on_defocus", "on_screen_load", "on_timer", "on_gesture"]
+        },
+        "action": {
+          "type": "string",
+          "description": "Function name to call, or special action: 'toggle_state', 'navigate_to', 'set_value', 'callback'"
+        },
+        "target":    { "type": "string", "description": "Target widget ID or screen name" },
+        "params":    { "type": "object", "description": "Additional parameters passed to the handler" },
+        "debounce_ms": { "type": "integer", "default": 0 }
+      },
+      "required": ["trigger", "action"]
+    }
+  },
+
+  "type": "object",
+  "required": ["name", "display", "screen"],
+  "properties": {
+
+    "name": {
+      "type": "string",
+      "description": "Project/UI name"
+    },
+
+    "version": {
+      "type": "string",
+      "default": "1.0"
+    },
+
+    "display": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width":        { "type": "integer", "description": "Display width (px)" },
+        "height":       { "type": "integer", "description": "Display height (px)" },
+        "color_depth":  { "type": "integer", "enum": [16, 32], "default": 16, "description": "LV_COLOR_DEPTH: 16=RGB565, 32=ARGB8888" },
+        "refresh_ms":   { "type": "integer", "default": 17, "description": "Display refresh period (17ms ≈ 60fps)" },
+        "fb_count":     { "type": "integer", "enum": [1, 2], "default": 2, "description": "Double buffering (IT2D uses 2 framebuffers)" },
+        "rotation":     { "type": "integer", "enum": [0, 90, 180, 270], "default": 0 }
+      }
+    },
+
+    "design_tokens": {
+      "type": "object",
+      "description": "Shared design tokens referenced by {token_name} throughout the UI",
+      "properties": {
+        "colors": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Color" },
+          "description": "Named colors, e.g. 'cyan_glow': '#00E5FF'"
+        },
+        "fonts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "file": { "type": "string", "description": "TTF/OTF font file" },
+              "sizes": { "type": "array", "items": { "type": "integer" }, "description": "Point sizes to generate" },
+              "bpp": { "type": "integer", "enum": [1, 2, 4, 8], "default": 4, "description": "Font bit-per-pixel (4=anti-aliased)" },
+              "fallback": { "type": "string" }
+            }
+          },
+          "description": "Font definitions. Each creates LV_FONT_DECLARE entries."
+        },
+        "gradients": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/Gradient" }
+        },
+        "timing": {
+          "type": "object",
+          "description": "Global animation timing constants",
+          "properties": {
+            "transition_fast":    { "type": "integer", "default": 200 },
+            "transition_normal":  { "type": "integer", "default": 400 },
+            "transition_slow":    { "type": "integer", "default": 800 }
+          }
+        }
+      }
+    },
+
+    "screen": {
+      "type": "object",
+      "required": ["children"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Screen ID for navigation reference"
+        },
+
+        "bg_color": {
+          "$ref": "#/definitions/Color",
+          "description": "Solid background color"
+        },
+
+        "bg_image": {
+          "type": "string",
+          "description": "Background image file path"
+        },
+
+        "bg_gradient": {
+          "$ref": "#/definitions/Gradient",
+          "description": "Background gradient (hardware-rendered)"
+        },
+
+        "default_font": {
+          "type": "string",
+          "default": "default_16"
+        },
+
+        "children": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/Widget" }
+        },
+
+        "states": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/StateDefinition" },
+          "description": "Named UI states (e.g. 'error', 'loading', 'empty')"
+        },
+
+        "events": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Event" }
+        }
+      }
+    },
+
+    "Widget": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z_][a-z0-9_]*$",
+          "description": "Unique widget ID (becomes C variable name suffix)"
+        },
+
+        "type": {
+          "type": "string",
+          "enum": [
+            "screen", "container", "panel", "label", "btn", "image",
+            "arc", "bar", "slider", "switch", "checkbox",
+            "dropdown", "roller", "textarea", "keyboard",
+            "list", "table", "chart", "meter", "led",
+            "circle_progress", "line", "spacer",
+            "tabview", "tileview", "calendar", "msgbox", "spinner",
+            "canvas", "imgbtn"
+          ],
+          "description": "LVGL widget type"
+        },
+
+        "comment": {
+          "type": "string",
+          "description": "Designer comment (does not affect output)"
+        },
+
+        "$ref": { "$ref": "#/definitions/Rect" },
+
+        "hidden": {
+          "type": "boolean",
+          "default": false,
+          "description": "Initially hidden"
+        },
+
+        "clickable": {
+          "type": "boolean",
+          "default": false
+        },
+
+        "scrollable": {
+          "type": "boolean",
+          "default": false
+        },
+
+        "style": {
+          "allOf": [
+            { "$ref": "#/definitions/BaseStyle" },
+            { "$ref": "#/definitions/WidgetSpecificStyle" }
+          ]
+        },
+
+        "state_style": {
+          "type": "object",
+          "properties": {
+            "default":  { "$ref": "#/definitions/BaseStyle" },
+            "pressed":  { "$ref": "#/definitions/BaseStyle" },
+            "focused":  { "$ref": "#/definitions/BaseStyle" },
+            "disabled": { "$ref": "#/definitions/BaseStyle" },
+            "checked":  { "$ref": "#/definitions/BaseStyle" },
+            "hover":    { "$ref": "#/definitions/BaseStyle" }
+          }
+        },
+
+        "label": {
+          "type": "string",
+          "description": "Button label text or placeholder text"
+        },
+
+        "value": {
+          "description": "Initial value (type depends on widget: int for arc/bar/slider, bool for switch/checkbox, string for label)"
+        },
+
+        "options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Options list for dropdown/roller"
+        },
+
+        "range": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "integer", "default": 0 },
+            "max": { "type": "integer", "default": 100 }
+          }
+        },
+
+        "src": {
+          "oneOf": [
+            { "$ref": "#/definitions/ImageSource" },
+            {
+              "type": "object",
+              "description": "Multiple image variants per state (uses hardware recolor if recolorable=true)",
+              "properties": {
+                "default":  { "$ref": "#/definitions/ImageSource" },
+                "pressed":  { "$ref": "#/definitions/ImageSource" },
+                "disabled": { "$ref": "#/definitions/ImageSource" },
+                "error":    { "$ref": "#/definitions/ImageSource" },
+                "active":   { "$ref": "#/definitions/ImageSource" },
+                "recolorable": { "type": "boolean", "default": false }
+              },
+              "required": ["default"]
+            }
+          ]
+        },
+
+        "recolor": { "$ref": "#/definitions/Recolor" },
+
+        "glow": { "$ref": "#/definitions/Glow" },
+
+        "glass": { "$ref": "#/definitions/Glass" },
+
+        "anim": {
+          "oneOf": [
+            { "$ref": "#/definitions/Animation" },
+            {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Animation" }
+            }
+          ]
+        },
+
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Widget" },
+          "description": "Child widgets (for container/panel/tabview types)"
+        },
+
+        "events": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Event" }
+        },
+
+        "composite": {
+          "type": "object",
+          "description": "Multi-surface compositing hints for IT2D GPU",
+          "properties": {
+            "layer":       { "type": "integer", "minimum": 0, "maximum": 3, "default": 0, "description": "IT2D composite surface index (0-3)" },
+            "blend_mode":  { "$ref": "#/definitions/BlendMode" },
+            "mask_src":    { "type": "string", "description": "Widget ID to use as alpha mask (IT2D hardware masking)" },
+            "cache_surf":  { "type": "boolean", "default": false, "description": "Cache rendered result as IT2D surface" }
+          }
+        }
+
+      }
+    },
+
+    "WidgetSpecificStyle": {
+      "type": "object",
+      "description": "Widget-specific style properties",
+      "properties": {
+        "arc_color":         { "$ref": "#/definitions/Color", "description": "Arc indicator color" },
+        "arc_width":         { "type": "integer", "description": "Arc thickness (px)" },
+        "arc_rounded":       { "type": "boolean", "default": true },
+        "arc_bg_color":      { "$ref": "#/definitions/Color" },
+        "arc_bg_opa":        { "type": "integer", "default": 0 },
+        "arc_rotation":      { "type": "integer", "default": 0, "description": "Arc start angle (0-360)" },
+        "indicator_color":   { "$ref": "#/definitions/Color", "description": "Bar/slider indicator color" },
+        "indicator_angle":   { "type": "integer", "default": 270, "description": "Arc sweep angle" },
+        "knob_color":        { "$ref": "#/definitions/Color" },
+        "knob_radius":       { "type": "integer" },
+        "line_color":        { "$ref": "#/definitions/Color" },
+        "line_width":        { "type": "integer", "default": 1 },
+        "line_rounded":      { "type": "boolean", "default": true },
+        "text_letter_space": { "type": "integer", "default": 0 },
+        "text_shadow":       { "$ref": "#/definitions/Shadow" },
+        "img_recolor_opa":   { "type": "integer", "minimum": 0, "maximum": 255, "description": "Hardware image recolor intensity" }
+      }
+    },
+
+    "StateDefinition": {
+      "type": "object",
+      "description": "A named UI state that overrides widget properties",
+      "properties": {
+        "bg_color":    { "$ref": "#/definitions/Color" },
+        "bg_image":    { "type": "string" },
+        "anim":        { "$ref": "#/definitions/Animation" },
+        "overrides": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "description": "Per-widget overrides in this state",
+            "properties": {
+              "hidden":       { "type": "boolean" },
+              "src_variant":  { "type": "string", "enum": ["default", "error", "active", "pressed", "disabled"] },
+              "recolor":      { "$ref": "#/definitions/Recolor" },
+              "text":         { "type": "string" },
+              "text_color":   { "$ref": "#/definitions/Color" },
+              "bg_color":     { "$ref": "#/definitions/Color" },
+              "border_color": { "$ref": "#/definitions/Color" },
+              "glow":         { "$ref": "#/definitions/Glow" },
+              "opa":          { "type": "integer" },
+              "value":        {},
+              "anim":         { "$ref": "#/definitions/Animation" },
+              "anim_speed":   { "type": "number", "description": "Animation speed multiplier" }
+            }
+          }
+        }
+      }
+    }
+
+  }
+}

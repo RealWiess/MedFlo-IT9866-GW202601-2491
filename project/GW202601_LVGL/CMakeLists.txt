@@ -339,7 +339,8 @@ if (DEFINED CFG_BTA_ENABLE)
         main.c
         scene.c
         scene_utility.c
-	        it2d_stub.c
+        ui_screen.c
+	        ${PROJECT_SOURCE_DIR}/sdk/driver/it2d/ite_it2d.c
 	        brotli_stub.c
         itp/network_func.c
         itp/network_main.c
@@ -351,6 +352,8 @@ if (DEFINED CFG_BTA_ENABLE)
         ${BRCM_BT_HCD_SRC}
         itp/btapp_gatts.c
     )
+    file(GLOB LVGL_ASSETS_BTA ${PROJECT_SOURCE_DIR}/project/${CMAKE_PROJECT_NAME}/data/img_hmi_*.c)
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${LVGL_ASSETS_BTA})
     set (PREBUILD_LIB
         ${BTA_PATH}/libs/libbluetooth_bta.a
     )
@@ -394,7 +397,8 @@ endif()
         main.c
         scene.c
         scene_utility.c
-	        it2d_stub.c
+        ui_screen.c
+	        ${PROJECT_SOURCE_DIR}/sdk/driver/it2d/ite_it2d.c
 	        brotli_stub.c
     )
 	if (DEFINED CFG_NET_ENABLE)
@@ -405,13 +409,17 @@ endif()
             itp//nework_mirror.c
         )
     endif()
+    # LVGL image assets
+    file(GLOB LVGL_ASSETS ${PROJECT_SOURCE_DIR}/project/${CMAKE_PROJECT_NAME}/data/img_hmi_*.c)
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${LVGL_ASSETS})
 else()
     add_executable(${CMAKE_PROJECT_NAME}
         function_table.c
         main.c
         scene.c
         scene_utility.c
-	        it2d_stub.c
+        ui_screen.c
+	        ${PROJECT_SOURCE_DIR}/sdk/driver/it2d/ite_it2d.c
 	        brotli_stub.c
     )
     if (DEFINED CFG_NET_ENABLE)
@@ -620,6 +628,7 @@ endif()
 
 if (DEFINED CFG_BUILD_LVGL)
     add_definitions(-DLV_CONF_INCLUDE_SIMPLE)
+    add_definitions(-DCFG_DEMO_WIDGETS)
     include_directories(
         ${PROJECT_SOURCE_DIR}/sdk/share/lvgl
         ${PROJECT_SOURCE_DIR}/sdk/share/lvgl/demos

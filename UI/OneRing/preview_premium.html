@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Premium OneRing UI Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background-color: #02050a; 
+            display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; 
+            font-family: 'Orbitron', sans-serif; 
+            color: white; 
+        }
+        .ui-container { 
+            position: relative; 
+            width: 500px; height: 500px; 
+            margin-bottom: 30px; 
+            flex-shrink: 0;
+        }
+        .layer { 
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            transition: opacity 0.8s ease-in-out; 
+            mix-blend-mode: screen;
+        }
+        .bg-layer { mix-blend-mode: normal; }
+        
+        .text-container { 
+            text-align: center; 
+            font-size: 18px; font-weight: 700; letter-spacing: 1px;
+            z-index: 10;
+        }
+        .text-wifi { color: #00ffff; transition: color 0.8s; margin-bottom: 10px; text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
+        .text-ble { color: #0055ff; transition: color 0.8s; text-shadow: 0 0 10px #0055ff, 0 0 20px #0055ff; }
+        
+        .error-mode .text-wifi { color: #ffaa00; text-shadow: 0 0 10px #ffaa00, 0 0 20px #ffaa00;}
+        .error-mode .text-ble { color: #ff0000; text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;}
+        
+        .normal-layer { opacity: 1; }
+        .error-layer { opacity: 0; }
+        .error-mode .normal-layer { opacity: 0; }
+        .error-mode .error-layer { opacity: 1; }
+        
+        @keyframes rotateGlow { 
+            0% { filter: hue-rotate(0deg) brightness(1); } 
+            50% { filter: hue-rotate(10deg) brightness(1.2); } 
+            100% { filter: hue-rotate(0deg) brightness(1); } 
+        }
+        .active-layer { animation: rotateGlow 3s infinite alternate; }
+        
+        button { 
+            padding: 12px 24px; background: #0a1a2a; 
+            color: #00ffff; border: 1px solid #00ffff; 
+            border-radius: 8px; cursor: pointer; 
+            font-family: 'Orbitron', sans-serif; font-size: 16px; 
+            margin-top: 20px; transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0,255,255,0.2);
+        }
+        button:hover { background: #00ffff; color: #02050a; box-shadow: 0 0 20px rgba(0,255,255,0.6); }
+    </style>
+</head>
+<body>
+    <div class="ui-container" id="ringUI">
+        <img src="bg_dark.svg" class="layer bg-layer">
+        
+        <img src="ring_wifi_active.svg" class="layer normal-layer active-layer">
+        <img src="ring_ble_active.svg" class="layer normal-layer active-layer">
+        <img src="icon_router.svg" class="layer normal-layer active-layer">
+        
+        <img src="ring_wifi_error.svg" class="layer error-layer active-layer">
+        <img src="ring_ble_error.svg" class="layer error-layer active-layer">
+        <img src="icon_alert.svg" class="layer error-layer active-layer">
+    </div>
+    
+    <div class="text-container" id="textUI">
+        <div class="text-wifi" id="txtWifi">WiFi: MedFlow_Office_2.4G (192.168.1.100)</div>
+        <div class="text-ble" id="txtBle">BLE: 12 Devices Active</div>
+    </div>
+    
+    <button onclick="toggleMode()">SYSTEM STATUS: ONLINE</button>
+    
+    <script>
+        let isError = false;
+        function toggleMode() {
+            isError = !isError;
+            const ui = document.getElementById('ringUI');
+            const txt = document.getElementById('textUI');
+            const txtWifi = document.getElementById('txtWifi');
+            const txtBle = document.getElementById('txtBle');
+            const btn = document.querySelector('button');
+            
+            if(isError) {
+                ui.classList.add('error-mode');
+                txt.classList.add('error-mode');
+                txtWifi.innerText = "WiFi: Disconnected";
+                txtBle.innerText = "BLE: Driver Error (Retry 3)";
+                btn.innerText = "SYSTEM STATUS: ERROR";
+                btn.style.color = "#ffaa00";
+                btn.style.borderColor = "#ffaa00";
+            } else {
+                ui.classList.remove('error-mode');
+                txt.classList.remove('error-mode');
+                txtWifi.innerText = "WiFi: MedFlow_Office_2.4G (192.168.1.100)";
+                txtBle.innerText = "BLE: 12 Devices Active";
+                btn.innerText = "SYSTEM STATUS: ONLINE";
+                btn.style.color = "#00ffff";
+                btn.style.borderColor = "#00ffff";
+            }
+        }
+    </script>
+</body>
+</html>

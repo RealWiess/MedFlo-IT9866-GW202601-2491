@@ -1,0 +1,86 @@
+#
+# GW202601_LVGL_v2 — Kconfig (adapted from lv_demos for 480x480 Gateway LCD)
+#
+
+mainmenu "Project Configuration"
+
+config LV_DEMOS
+    bool
+    default y
+    select HAVE_LCD
+    select HAVE_GRAPHICS
+
+config CMAKE_SOURCE_DIR
+    string
+    option env="CMAKE_SOURCE_DIR"
+
+config BACKLIGHT_ENABLE
+    def_bool y
+
+config LCD_ENABLE
+    def_bool y
+
+# Gateway LCD is 480x480, no rotation needed
+# config ENABLE_ROTATE is not set
+
+config LCD_WIDTH
+    default "480"
+
+config LCD_HEIGHT
+    default "480"
+
+config LCD_PITCH
+    default "960"
+
+config LCD_INIT_SCRIPT
+    default "IT9860_AVM040EXA02J-X01_RGB565_18bits_Gateway.txt"
+
+config LCD_TRIPLE_BUFFER
+    default y
+
+config BACKLIGHT_DUTY_CYCLES
+    default "20, 40, 60, 80, 100, 0, 0, 0, 0, 0"
+
+config BACKLIGHT_DEFAULT_DUTY_CYCLE
+    default "40"
+
+config CMDQ_ENABLE
+    def_bool y
+
+# config SPI_ENABLE is not set
+
+config I2C1_ENABLE
+    def_bool y
+
+config GPIO_IIC1_CLK
+    default "27"
+
+config GPIO_IIC1_DATA
+    default "28"
+
+# config TOUCH_ENABLE is not set
+
+config GPIO_LCD_PWR_EN
+    default "67"
+
+config GPIO_BACKLIGHT_PWM
+    default "33"
+
+config DBG_INIT_SCRIPT
+    default "IT9860_792Mhz_DDR3_792Mhz.txt"
+
+# config TSLIB_STATIC_CONF is not set
+
+config BUILD_IT2D
+    def_bool y
+
+config BUILD_LVGL
+    def_bool y
+
+config BUILD_FREETYPE
+    def_bool y
+
+config BUILD_ZLIB
+    def_bool y
+
+source "$CMAKE_SOURCE_DIR/sdk/Kconfig"

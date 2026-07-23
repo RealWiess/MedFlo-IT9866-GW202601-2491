@@ -1,0 +1,6 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+    <defs></defs>
+    <circle cx="200" cy="200" r="120" fill="none" stroke="#111a22" stroke-width="12" 
+            stroke-dasharray="565.4861999999999 188.4954" stroke-linecap="round" 
+            transform="rotate(135 200 200)"  />
+</svg>

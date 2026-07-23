@@ -1,0 +1,15 @@
+info bootloader
+
+mcu castor3
+family 9860
+ram_size 0x4000000
+big-endian 0
+init_script C:/SW code/source code/ITE9868_GWBuild_2491_20260718\sdk\target\debug\IT9860_792Mhz_DDR3_792Mhz.txt
+outbuf_addr 0xC0
+outbuf_size_addr 0xC4
+outbuf_index_addr 0xC8
+inbuf_addr 0xFF4
+inbuf_size_addr 0xFF8
+inbuf_index_addr 0xFFC
+io_dev_id 0xD8000004
+io_rev_id 0xD8000004

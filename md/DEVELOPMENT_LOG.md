@@ -129,6 +129,97 @@
 
 ---
 
+## 2026-07-23 — 重大突破：WiFi + BLE + LVGL 首次成功整合
+
+### WiFi 修復
+* **根因**：`itp_init_openrtos.c` 只註冊 WiFi 設備但未呼叫 `ITP_IOCTL_INIT`，導致 `wifiInited = false` → `WifiMgr_Init` 回傳 2
+* **修復**：參照 `test_wifi_sdio/RTL/power_main.c:WifiFirstPowerOn()`，補上 `ITP_IOCTL_INIT` 呼叫
+* **WiFi config**：參照 `test_wifi_sdio/Kconfig` 正確開啟 `CFG_NET_WIFI`, `CFG_NET_WIFI_SDIO`, `CFG_NET_WIFI_SDIO_NGPL_8821CS`, `CFG_NET_WIFI_SDIO_VND_RTK`, `CFG_NET_WIFI_MGR`, `CFG_NET_WIFI_WPA`, `CFG_SDIO_ENABLE`, `CFG_SDIO0_STATIC`, `CFG_SDIO_4BIT_MODE`
+* **結果**：WiFi 連線成功 (Getnew6336, IP 172.20.10.x)
+
+### BLE 修復
+* **BLE config**：參照 `test_nimble/Kconfig` 正確開啟 `CFG_BUILD_BLUETOOTH`, `CFG_BUILD_NIMBLE`, `CFG_RTL8821BLE`, `CFG_BT_HAL_UART0`
+* **CMakeLists**：參照 `test_nimble/CMakeLists.txt` 加入 `bluetooth` RTL header，移除手動 `target_link_libraries`
+* **掃描**：參照 `test_nimble/test_scan.c` 實作 MedFlo 裝置掃描，過濾條件參照舊 SDK `bt_main.c:bt_handle_disc()`
+* **結果**：BLE 掃描運作，成功找到 MedFlo 裝置
+
+### LVGL 修復
+* **Timer one-shot**：`lv_timer_create` 在 LVGL v9 是週期性 → 加 `lv_timer_del(t)` 避免每 3 秒重建畫面
+* **文字閃爍**：`lv_label_set_text` 只在內容改變時才呼叫（本地快取比對）
+* **開機 Logo**：Splash 畫面正常顯示 + 淡入動畫 → 3 秒後自動切換主畫面
+
+### 未解決問題
+* **UART0 衝突**：BLE NimBLE 和 WiFi 驅動都初始化 UART0（`Alert: UART port 0 init more than once`）
+* **LFS partition table 全 0xFF**：LittleFS 分割表從未寫入，需透過升級系統建立
+* **WifiMgr "Connect cancel" 狀態**：連線成功後進入此狀態，原因待查
+* **BLE 只掃到 2 個裝置**：確認為距離/功率問題，非程式 bug（後續掃到 9 個裝置）
+* **SDIO CMD 錯誤**：開機時 `[SD][ERR] CMD52 done (0x000D0027)` 多次出現
+* **MP4 動畫 Logo**：C 檔過大（14MB），編譯逾時，需改用 LFS 分割區存放 binary frame data
+* **MQTT `send()` crash**：連結 `send()` 符號會觸發 lwIP socket 層靜態初始化 crash，可用 `write()`/`read()` 替代
+
+---
+
+## 2026-07-23 (續) — LFS 修復 + MQTT 移植 + crash 二分除錯
+
+### LFS cache 修復
+* **根因**：`CFG_LFS_CACHE_SIZE = 0x2000`（8KB）非 NOR block size（64KB）倍數
+* **修復**：改為 `0x40000`（256KB = 4 blocks），符合 `cache_size % block_size == 0` 檢查
+* **結果**：`lfs_cache_constructor success!`（但 partition table 仍需升級系統建立）
+
+### MQTT 移植（進行中）
+* **設計**：雙 MQTT 連線 — Write (DCareW/4rfghy6) PUBLISH 到 `DCare/d/{gwid}`，Read (DCareR/6yhgvfr4) SUBSCRIBE `DCare/d/#`
+* **SDK 2491 lwIP MQTT 庫**：`sdk/share/lwip/apps/mqtt/mqtt.c` 被註解掉（與此版 lwIP 不相容），改用 raw socket 自建 MQTT 封包
+* **方法**：參照舊專案 `bt_log.c` MqttUploadTask，自建 MQTT 3.1.1 CONNECT/PUBLISH/SUBSCRIBE/PINGREQ 封包
+
+### MQTT crash 二分除錯
+* **現象**：加入 `mqtt_app_init()` 呼叫後系統 `Data Abort Error: 10` 無限重啟
+* **二分過程**：
+  1. 只 link mqtt_app.o 不呼叫 → ✅ OK
+  2. 空 task（只 print + return）→ ✅ OK
+  3. + sleep(10) + WifiMgr_Get_WIFI_MAC() → ✅ OK
+  4. + DNS (gethostbyname) → ✅ OK
+  5. + TCP socket + connect → ✅ OK
+  6. **+ send() → ❌ CRASH**
+* **根因**：`send()` 符號觸發 linker 載入 lwIP socket 層靜態初始化，在 `main()` 之前崩潰
+* **解法**：用 `write()`/`read()` 替代 `send()`/`recv()` — 已驗證 `write()` 不觸發 crash
+* **待辦**：用 `write()`/`read()` 完成完整雙 MQTT 實作
+
+### 今日規則總結
+* **每次修改前必須先研究 SDK 2491 範例**，不可憑空硬幹
+* **編譯必須 CMake → make，不可單獨 make**
+* **二分除錯**可以有效定位問題（send vs write crash）
+
+---
+
+## 🔴 待辦：完整移植 SDK 2470 功能到 SDK 2491
+
+> 來源：`C:\SW code\source code\ITE9868_GWBuild_20260707\`
+> 目標：`C:\SW code\source code\ITE9868_GWBuild_2491_20260718\`
+
+### Phase 1: 核心模組移植
+- [ ] **MQTT** — Paho MQTT client, broker 連線, topic 訂閱/發布, PINGREQ/PINGRESP
+- [ ] **USB CDC-ACM** — USB 虛擬串口, JSON 指令協議 (GET_STATUS, GET_LOGS, SET_WIFI, OTA)
+- [ ] **BLE 資料記錄** — bt_log 環形緩衝區, MQTT 批次上傳, MedFlo device tracking
+- [ ] **WiFi 管理** — AP 掃描, 多 SSID 切換, 自動重連, failsafe 守護
+
+### Phase 2: 系統功能
+- [ ] **OTA 升級** — HTTP/HTTPS 下載, CRC 驗證, bootloader 整合, MQTT 廣播 OTA
+- [ ] **設定儲存** — ctrlboard.ini 讀寫, LittleFS 分割區初始化及格式化
+- [ ] **系統日誌** — sys_log 環形緩衝區 (8KB), app_printf 巨集
+
+### Phase 3: 問題修復
+- [ ] **UART0 衝突** — BLE/WiFi 共用 RTL8821CS UART, 需參照 SDK coex 機制
+- [ ] **LFS 分割區** — 修復 partition table 初始化, lfs_cache_constructor error
+- [ ] **SDIO CMD 錯誤** — 排查開機 SDIO CMD52/CMD8 error
+- [ ] **WifiMgr Connect cancel** — 理解狀態機, 修正 callback 邏輯
+
+### Phase 4: 強化
+- [ ] **MP4 動畫 Logo** — 將幀資料存入 LFS 分割區, 開機動畫播放
+- [ ] **BLE 全功能** — GATT service, advertising, device name 設定
+- [ ] **觸控支援** — GT911 I2C 觸控驅動
+
+---
+
 ## 開發規則
 1. 所有 SDK 2491 相關對話及開發記錄，均記錄於此檔案及 `md/` 目錄下
 2. 穩定版的文件在該目錄的 `md/` 下，兩個專案獨立記錄

@@ -6,6 +6,7 @@
 #include "ui_screen.h"
 #include "ble_init.h"
 #include "wifi_app.h"
+#include "mqtt_app.h"
 
 extern int lvgl_init(void);
 
@@ -31,20 +32,22 @@ void* MainFunc(void* arg)
     ioctl(ITP_DEVICE_SCREEN, ITP_IOCTL_POST_RESET, NULL);
     printf("[3] POST_RESET OK\n"); fflush(stdout);
 
-    /* 4. Gateway HMI */
+    /* 4. Gateway HMI — splash first, backlight ON immediately */
     printf("[4] ui_screen_init...\n"); fflush(stdout);
     ui_screen_init();
-    printf("[4] HMI OK\n"); fflush(stdout);
-
-    /* 5. WiFi disabled for now */
-    printf("[5] WiFi disabled\n"); fflush(stdout);
-
-    /* 6. First frame */
-    lv_timer_handler();
-
-    /* 7. BACKLIGHT ON */
-    printf("[7] BACKLIGHT_ON!\n"); fflush(stdout);
+    lv_timer_handler();  /* render splash screen */
     ioctl(ITP_DEVICE_BACKLIGHT, ITP_IOCTL_ON, NULL);
+    printf("[4] HMI OK + BACKLIGHT ON\n"); fflush(stdout);
+
+    /* 5. Init WiFi + BLE while splash is visible */
+    printf("[5] WiFi+BLE start...\n"); fflush(stdout);
+    wifi_app_start();
+    ble_init();
+    printf("[5] WiFi+BLE started\n"); fflush(stdout);
+
+    /* TEST: call mqtt_app_init with empty task — bisect crash cause */
+    mqtt_app_init();
+    printf("[5] MQTT init done\n"); fflush(stdout);
 
     printf("===== MAIN LOOP =====\n"); fflush(stdout);
     uint32_t last_update = 0;
@@ -54,12 +57,15 @@ void* MainFunc(void* arg)
 
         /* Update HMI every 2 seconds */
         uint32_t now = lv_tick_get();
-        if (now - last_update > 2000) {
+        if (now - last_update > 5000) {
             last_update = now;
             ui_screen_update_wifi(
                 wifi_app_get_ssid(),
                 wifi_app_get_ip(),
                 wifi_app_is_connected());
+            ui_screen_update_ble(
+                ble_get_device_count(),
+                true);
         }
     }
     return 0;

@@ -107,7 +107,7 @@ set(CFG_DEF_BUILD_MINSIZEREL y)
 set(CFG_SYSTEM_NAME "GATEWAY")
 set(CFG_ITU_FT_CACHE_ENABLE y)
 set(CFG_ITU_FT_CACHE_SIZE "0xFA000")
-#set(CFG_GCC_LTO y)  # Disabled temporarily for GW202601_LVGL migration
+# set(CFG_GCC_LTO y)  # Causes lto-wrapper link error with netif/xnetif
 set(CFG_BUILD_MBEDTLS y)
 set(CFG_BUILD_LVGL y)
 set(CFG_LFS_CACHE_SIZE 0x2000)
@@ -143,7 +143,7 @@ set(CFG_BOOTLOADER_ENABLE y)
 # (unvisible)
 #
 set(CFG_LCD_BOOT_BITMAP "NMGW2601_logo_03.bmp")
-set(CFG_BL_SHOW_LOGO y)
+# CFG_BL_SHOW_LOGO is not set
 
 #
 # (unvisible)
@@ -173,11 +173,11 @@ set(CFG_DEF_UPGRADE_PUBLIC_NOR y)
 set(CFG_DEF_UPGRADE_TEMP_NOR y)
 set(CFG_UPGRADE_NOR_IMAGE y)
 set(CFG_UPGRADE_NOR_IMAGE_SIZE "0x1000000")
-set(CFG_BL_LCD_CONSOLE y)
-set(CFG_BL_ERR y)
-set(CFG_BL_WARN y)
-set(CFG_BL_INFO y)
-set(CFG_BL_DBG y)
+# CFG_BL_LCD_CONSOLE is not set
+# CFG_BL_ERR is not set
+# CFG_BL_WARN is not set
+# CFG_BL_INFO is not set
+# CFG_BL_DBG is not set
 set(CFG_CHECK_FILES_CRC_ON_BOOTING y)
 set(CFG_HAVE_LCD y)
 set(CFG_HAVE_GRAPHICS y)
@@ -227,7 +227,7 @@ set(CFG_CHIP_PKG_IT9866 y)
 # CFG_CHIP_PKG_IT9868 is not set
 # CFG_CHIP_PKG_IT9868_AT is not set
 set(CFG_MMAP_SIZE "0")
-set(CFG_WATCHDOG_TIMEOUT 10)
+set(CFG_WATCHDOG_TIMEOUT 120)
 set(CFG_WATCHDOG_REFRESH_INTERVAL 1)
 # CFG_WATCHDOG_INTR is not set
 # CFG_WATCHDOG_IDLETASK is not set
@@ -596,8 +596,8 @@ set(CFG_UPGRADE_MARK_POS "0")
 set(CFG_BUILD_MINSIZEREL y)
 set(CFG_VERSION_MAJOR "2")
 set(CFG_VERSION_MINOR "4")
-set(CFG_VERSION_PATCH "7")
-set(CFG_VERSION_CUSTOM "0")
+set(CFG_VERSION_PATCH "9")
+set(CFG_VERSION_CUSTOM "1")
 set(CFG_MANUFACTURER "www.wiess.biz")
 # CFG_GENERATE_DOC is not set
 # CFG_GENERATE_PACK_ENV is not set

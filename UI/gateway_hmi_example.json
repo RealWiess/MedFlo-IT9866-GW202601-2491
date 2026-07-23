@@ -1,0 +1,92 @@
+{
+  "name": "GatewayHMI",
+  "version": "1.0",
+  "display": { "width": 480, "height": 480, "color_depth": 16, "refresh_ms": 17, "fb_count": 2 },
+
+  "design_tokens": {
+    "colors": {
+      "cyan_glow": "#00E5FF", "blue_glow": "#2979FF", "orange_alert": "#FF9100",
+      "bg_deep": "#050A10", "text_white": "#FFFFFF"
+    },
+    "fonts": {
+      "tech": { "file": "Orbitron-Bold.ttf", "sizes": [14, 16, 18], "bpp": 4 }
+    }
+  },
+
+  "screen": {
+    "id": "main_dashboard",
+    "bg_color": "{bg_deep}",
+    "bg_image": "OneRing/hmi_bg_pro.png",
+    "bg_image_resize": "480x480",
+
+    "children": [
+      {
+        "id": "wifi_ring", "type": "image",
+        "x": 24, "y": 24, "w": 432, "h": 432,
+        "src": { "default": { "file": "OneRing/hmi_wifi_ring_pro_trans.png", "format": "argb8888", "resize": "432x432" } },
+        "anim": [{ "type": "rotation", "from": 0, "to": 3600, "duration_ms": 40000, "ease": "linear", "loop": true }],
+        "composite": { "layer": 1, "blend_mode": "additive" }
+      },
+      {
+        "id": "ble_ring", "type": "image",
+        "x": 72, "y": 72, "w": 336, "h": 336,
+        "src": { "default": { "file": "OneRing/hmi_ble_ring_pro_trans.png", "format": "argb8888", "resize": "336x336" } },
+        "anim": [{ "type": "rotation", "from": 3600, "to": 0, "duration_ms": 30000, "ease": "linear", "loop": true }],
+        "composite": { "layer": 2, "blend_mode": "additive" }
+      },
+      {
+        "id": "center_icon", "type": "image",
+        "x": 180, "y": 180, "w": 120, "h": 120,
+        "src": {
+          "default": { "file": "OneRing/hmi_icon_router_pro_trans.png", "format": "argb8888", "resize": "120x120" },
+          "error":  { "file": "OneRing/hmi_icon_alert_pro_trans.png",  "format": "argb8888", "resize": "120x120" }
+        }
+      },
+      {
+        "id": "data_panel_wifi", "type": "panel",
+        "x": 30, "y": 348, "w": 420, "h": 38,
+        "style": { "radius": 6, "bg_color": "rgba(0,5,15,0.75)", "border": { "width": 1, "color": "rgba(0,229,255,0.25)" } },
+        "children": [
+          { "id": "label_wifi", "type": "label", "x": 12, "y": 8, "w": 60, "h": 22,
+            "label": "WIFI:", "style": { "text_font": "tech_14", "text_color": "{cyan_glow}" } },
+          { "id": "val_wifi", "type": "label", "x": 78, "y": 8, "w": 330, "h": 22,
+            "label": "MedFlow_Office_5G (192.168.1.100)", "style": { "text_font": "tech_14", "text_color": "{text_white}" } }
+        ]
+      },
+      {
+        "id": "data_panel_ble", "type": "panel",
+        "x": 30, "y": 394, "w": 420, "h": 38,
+        "style": { "radius": 6, "bg_color": "rgba(0,5,15,0.75)", "border": { "width": 1, "color": "rgba(41,121,255,0.25)" } },
+        "children": [
+          { "id": "label_ble", "type": "label", "x": 12, "y": 8, "w": 46, "h": 22,
+            "label": "BLE:", "style": { "text_font": "tech_14", "text_color": "{blue_glow}" } },
+          { "id": "val_ble", "type": "label", "x": 58, "y": 8, "w": 350, "h": 22,
+            "label": "12 Devices Linked", "style": { "text_font": "tech_14", "text_color": "{text_white}" } }
+        ]
+      },
+      {
+        "id": "trigger_btn", "type": "btn",
+        "x": 120, "y": 440, "w": 240, "h": 36, "label": "TRIGGER ERROR STATE",
+        "style": { "radius": 4, "bg_color": "rgba(0,5,15,0.8)", "border": { "width": 1, "color": "{cyan_glow}" },
+                   "text_font": "tech_14", "text_color": "{cyan_glow}", "text_letter_space": 2 },
+        "state_style": { "hover": { "bg_color": "rgba(0,229,255,0.15)" } },
+        "events": [{ "trigger": "on_click", "action": "toggle_state", "target": "error" }]
+      }
+    ],
+
+    "states": {
+      "error": {
+        "overrides": {
+          "center_icon": { "src_variant": "error" },
+          "label_wifi":  { "text_color": "{orange_alert}" },
+          "label_ble":   { "text_color": "{orange_alert}" },
+          "val_wifi":    { "text": "OFFLINE (DHCP TIMEOUT)" },
+          "val_ble":     { "text": "DRIVER FAULT (CODE: 0x9F)" },
+          "data_panel_wifi": { "border_color": "rgba(255,145,0,0.3)" },
+          "data_panel_ble":  { "border_color": "rgba(255,145,0,0.3)" },
+          "trigger_btn": { "label": "RESTORE SYSTEM", "border_color": "{orange_alert}", "text_color": "{orange_alert}" }
+        }
+      }
+    }
+  }
+}

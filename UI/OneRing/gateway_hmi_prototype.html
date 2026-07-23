@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway HMI Prototype - Sci-Fi Immersive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-deep: #050A10;
+            --bg-radial: #0A1424;
+            
+            --cyan-glow: #00E5FF;
+            --blue-glow: #2979FF;
+            --orange-alert: #FF9100;
+            
+            --glow-filter-cyan: drop-shadow(0 0 12px rgba(0, 229, 255, 0.7)) drop-shadow(0 0 25px rgba(0, 229, 255, 0.3));
+            --glow-filter-blue: drop-shadow(0 0 12px rgba(41, 121, 255, 0.7)) drop-shadow(0 0 25px rgba(41, 121, 255, 0.3));
+            --glow-filter-orange: drop-shadow(0 0 12px rgba(255, 145, 0, 0.7)) drop-shadow(0 0 25px rgba(255, 145, 0, 0.3));
+            
+            --font-tech: 'Orbitron', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-deep);
+            /* 雷達網格背景 */
+            background-image: 
+                radial-gradient(circle at center, var(--bg-radial) 0%, transparent 60%),
+                linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            background-position: center center;
+            color: white;
+            font-family: var(--font-tech);
+            overflow: hidden;
+        }
+
+        .hmi-dashboard {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* 絕對定位圖層，用於疊加 SVG 元件 */
+        .layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* 微動畫：呼吸效果 */
+        @keyframes pulse-glow {
+            0% { filter: brightness(1) drop-shadow(0 0 10px rgba(0, 229, 255, 0.4)); }
+            100% { filter: brightness(1.2) drop-shadow(0 0 20px rgba(0, 229, 255, 0.8)); }
+        }
+        
+        @keyframes pulse-glow-blue {
+            0% { filter: brightness(1) drop-shadow(0 0 10px rgba(41, 121, 255, 0.4)); }
+            100% { filter: brightness(1.2) drop-shadow(0 0 20px rgba(41, 121, 255, 0.8)); }
+        }
+
+        /* 微動畫：緩慢旋轉 (雷達掃描感) */
+        @keyframes rotate-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes rotate-slow-reverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .arc-wifi { filter: var(--glow-filter-cyan); animation: pulse-glow 3s infinite alternate; }
+        .arc-ble { filter: var(--glow-filter-blue); animation: pulse-glow-blue 3s infinite alternate; }
+        
+        .grid-rotator { animation: rotate-slow 60s linear infinite; opacity: 0.3; }
+        .grid-rotator-rev { animation: rotate-slow-reverse 45s linear infinite; opacity: 0.3; }
+
+        .center-icon {
+            filter: var(--glow-filter-cyan);
+            color: var(--cyan-glow);
+            transition: all 0.5s;
+        }
+
+        /* 底部數據面板 */
+        .data-panel {
+            position: relative;
+            margin-top: -30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .data-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .label-wifi { color: var(--cyan-glow); text-shadow: 0 0 10px var(--cyan-glow); }
+        .label-ble { color: var(--blue-glow); text-shadow: 0 0 10px var(--blue-glow); }
+        .data-value { color: #ffffff; text-shadow: none; font-weight: 400; }
+
+        /* 錯誤狀態主題切換 */
+        body.state-error .arc-wifi,
+        body.state-error .arc-ble,
+        body.state-error .center-icon {
+            filter: var(--glow-filter-orange);
+            color: var(--orange-alert);
+            animation: none; /* 錯誤時取消平滑呼吸，改用快速閃爍 */
+        }
+        
+        @keyframes error-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        body.state-error .hmi-dashboard {
+            animation: error-blink 1s infinite;
+        }
+
+        body.state-error .label-wifi,
+        body.state-error .label-ble {
+            color: var(--orange-alert);
+            text-shadow: 0 0 10px var(--orange-alert);
+        }
+
+        /* 控制面板 (僅供模擬) */
+        .control-btn {
+            margin-top: 40px;
+            padding: 10px 30px;
+            background: rgba(0, 229, 255, 0.05);
+            border: 1px solid var(--cyan-glow);
+            color: var(--cyan-glow);
+            font-family: var(--font-tech);
+            font-size: 16px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.2), 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+        .control-btn:hover { background: rgba(0, 229, 255, 0.2); }
+        
+        body.state-error .control-btn {
+            border-color: var(--orange-alert);
+            color: var(--orange-alert);
+            background: rgba(255, 145, 0, 0.05);
+            box-shadow: inset 0 0 10px rgba(255, 145, 0, 0.2), 0 0 10px rgba(255, 145, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hmi-dashboard">
+        <!-- 裝飾網格與刻度 (背景旋轉層) -->
+        <div class="layer grid-rotator">
+            <svg width="600" height="600" viewBox="0 0 600 600">
+                <circle cx="300" cy="300" r="280" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="2 10" />
+                <circle cx="300" cy="300" r="260" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4" stroke-dasharray="1 30" />
+            </svg>
+        </div>
+        <div class="layer grid-rotator-rev">
+            <svg width="600" height="600" viewBox="0 0 600 600">
+                <circle cx="300" cy="300" r="140" fill="none" stroke="rgba(0, 229, 255, 0.2)" stroke-width="1" stroke-dasharray="4 8" />
+            </svg>
+        </div>
+
+        <!-- 複合式圓環：外圈 WIFI (Cyan) -->
+        <div class="layer arc-wifi">
+            <svg width="600" height="600" viewBox="0 0 600 600">
+                <!-- 漸層定義 -->
+                <defs>
+                    <linearGradient id="cyanGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#0088FF" />
+                        <stop offset="50%" stop-color="#00E5FF" />
+                        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+                    </linearGradient>
+                </defs>
+                <g transform="translate(300,300) rotate(140)">
+                    <!-- 外環軌道底層 -->
+                    <circle r="220" fill="none" stroke="rgba(0, 229, 255, 0.1)" stroke-width="16" stroke-dasharray="1036 345" stroke-linecap="round" />
+                    <!-- 外環外側虛線 -->
+                    <circle r="236" fill="none" stroke="#00E5FF" stroke-width="2" stroke-dasharray="15 20" stroke-dashoffset="10" opacity="0.7" />
+                    <!-- 主發光進度 -->
+                    <circle r="220" fill="none" stroke="url(#cyanGrad)" stroke-width="12" stroke-dasharray="829 552" stroke-linecap="round" />
+                    <!-- 外環內側實線 -->
+                    <circle r="204" fill="none" stroke="#00E5FF" stroke-width="1.5" stroke-dasharray="961 320" stroke-linecap="round" opacity="0.9" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- 複合式圓環：內圈 BLE (Blue) -->
+        <div class="layer arc-ble">
+            <svg width="600" height="600" viewBox="0 0 600 600">
+                <defs>
+                    <linearGradient id="blueGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#0033CC" />
+                        <stop offset="50%" stop-color="#2979FF" />
+                        <stop offset="100%" stop-color="#88AAFF" />
+                    </linearGradient>
+                </defs>
+                <g transform="translate(300,300) rotate(140)">
+                    <!-- 內環主進度 -->
+                    <circle r="165" fill="none" stroke="url(#blueGrad)" stroke-width="14" stroke-dasharray="777 259" stroke-linecap="round" />
+                    <!-- 內環點狀刻度 -->
+                    <circle r="148" fill="none" stroke="#2979FF" stroke-width="4" stroke-dasharray="4 15" opacity="0.8" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- 中心圖示核心 (Router / Alert) -->
+        <div class="layer center-icon">
+            <svg id="icon-router" width="120" height="120" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- 漂浮的光暈點 -->
+                <circle cx="50" cy="50" r="30" fill="currentColor" opacity="0.05" />
+                
+                <rect x="20" y="60" width="60" height="16" rx="4"/>
+                <circle cx="32" cy="68" r="2.5" fill="currentColor"/>
+                <circle cx="50" cy="68" r="2.5" fill="currentColor"/>
+                <circle cx="68" cy="68" r="2.5" fill="currentColor"/>
+                
+                <path d="M 50 60 L 50 25"/>
+                <circle cx="50" cy="22" r="3" fill="currentColor"/>
+                
+                <path d="M 30 40 A 25 25 0 0 1 70 40" stroke-dasharray="3 3"/>
+                <path d="M 15 25 A 45 45 0 0 1 85 25"/>
+            </svg>
+            <svg id="icon-alert" width="120" height="120" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                <path d="M 50 15 L 85 80 L 15 80 Z"/>
+                <path d="M 50 35 L 50 60"/>
+                <circle cx="50" cy="72" r="2" fill="currentColor"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- 底部全息數據面板 -->
+    <div class="data-panel">
+        <div class="data-row label-wifi">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21L15.6 16.2C14.6 15.4 13.4 15 12 15C10.6 15 9.4 15.4 8.4 16.2L12 21ZM12 11C9.5 11 7.2 11.9 5.4 13.4L7.5 16.2C8.8 15.1 10.3 14.5 12 14.5C13.7 14.5 15.2 15.1 16.5 16.2L18.6 13.4C16.8 11.9 14.5 11 12 11ZM12 7C8.4 7 5.1 8.3 2.5 10.6L4.6 13.4C6.6 11.6 9.2 10.5 12 10.5C14.8 10.5 17.4 11.6 19.4 13.4L21.5 10.6C18.9 8.3 15.6 7 12 7Z"/>
+            </svg>
+            WIFI: <span class="data-value" id="val-wifi">MedFlow_Office_2.4G (192.168.1.100)</span>
+        </div>
+        <div class="data-row label-ble">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M 3 12 L 8 12 L 11 4 L 14 20 L 17 12 L 21 12" />
+            </svg>
+            BLE: <span class="data-value" id="val-ble">12 Devices Active</span>
+        </div>
+    </div>
+
+    <button class="control-btn" onclick="toggleState()">OVERRIDE: INJECT FAULT</button>
+
+    <script>
+        let isError = false;
+        function toggleState() {
+            isError = !isError;
+            const body = document.body;
+            const btn = document.querySelector('.control-btn');
+            
+            if (isError) {
+                body.classList.add('state-error');
+                document.getElementById('icon-router').style.display = 'none';
+                document.getElementById('icon-alert').style.display = 'block';
+                document.getElementById('val-wifi').innerText = 'CONNECTION LOST';
+                document.getElementById('val-ble').innerText = 'DRIVER FAULT (CODE: 404)';
+                btn.innerText = 'OVERRIDE: RESTORE SYSTEM';
+            } else {
+                body.classList.remove('state-error');
+                document.getElementById('icon-router').style.display = 'block';
+                document.getElementById('icon-alert').style.display = 'none';
+                document.getElementById('val-wifi').innerText = 'MedFlow_Office_2.4G (192.168.1.100)';
+                document.getElementById('val-ble').innerText = '12 Devices Active';
+                btn.innerText = 'OVERRIDE: INJECT FAULT';
+            }
+        }
+    </script>
+</body>
+</html>

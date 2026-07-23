@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedFlow HMI - GUI Component Proposal</title>
+    <!-- 引入科幻風與現代無襯線字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================================
+           1. Design Tokens (設計系統變數) 
+           對應 LVGL 的 Theme / Palette 設定
+        ========================================================= */
+        :root {
+            /* 顏色 Tokens */
+            --bg-deep-space: #03080e;
+            --bg-radial-center: #0a1828;
+            
+            --primary-cyan: #00ffff;
+            --primary-cyan-dim: #006666;
+            --primary-blue: #1166ff;
+            --primary-blue-dim: #052266;
+            
+            --alert-orange: #ffaa00;
+            --alert-red: #ff0044;
+            
+            --text-main: #ffffff;
+            --text-secondary: #aaddff;
+
+            /* 發光特效 Tokens (對應 LVGL shadow_width / shadow_color) */
+            --glow-cyan-subtle: 0 0 8px rgba(0, 255, 255, 0.4);
+            --glow-cyan-strong: 0 0 15px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.4);
+            --glow-blue-strong: 0 0 15px rgba(17, 102, 255, 0.8), 0 0 30px rgba(17, 102, 255, 0.4);
+            
+            --glow-orange-strong: 0 0 15px rgba(255, 170, 0, 0.8), 0 0 30px rgba(255, 170, 0, 0.4);
+            --glow-red-strong: 0 0 15px rgba(255, 0, 68, 0.8), 0 0 30px rgba(255, 0, 68, 0.4);
+
+            /* 字體 Tokens */
+            --font-display: 'Orbitron', sans-serif;
+            --font-ui: 'Inter', sans-serif;
+        }
+
+        /* 主題切換 (狀態機概念) */
+        body.status-error {
+            --primary-cyan: var(--alert-orange);
+            --primary-cyan-dim: #664400;
+            --glow-cyan-strong: var(--glow-orange-strong);
+            --glow-cyan-subtle: 0 0 8px rgba(255, 170, 0, 0.4);
+
+            --primary-blue: var(--alert-red);
+            --primary-blue-dim: #660011;
+            --glow-blue-strong: var(--glow-red-strong);
+        }
+
+        /* 基礎畫布設定 */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-deep-space);
+            background-image: radial-gradient(circle at center, var(--bg-radial-center) 0%, var(--bg-deep-space) 70%);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+        }
+
+        /* =========================================================
+           2. HMI Components (GUI 元件定義)
+        ========================================================= */
+
+        /* Container 元件：對應 LVGL 的 base object (lv_obj) */
+        .hmi-widget-ring {
+            position: relative;
+            width: 460px;
+            height: 460px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* 防止彈性排版壓縮變形 */
+        }
+
+        /* Arc 進度條元件：對應 LVGL 的 lv_arc */
+        .hmi-arc {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Arc 的不同圖層疊加，模擬原圖的豐富層次 */
+        .hmi-arc.track {
+            border: 2px solid transparent;
+            opacity: 0.3;
+        }
+        .hmi-arc.indicator {
+            /* 這裡使用 SVG 來繪製帶有缺口的圓環，LVGL 則直接設定 lv_arc 的 angle */
+            transition: all 0.5s ease;
+        }
+
+        /* 科技圖示元件：對應 LVGL 的 lv_img (使用 icon font 或向量資料) */
+        .hmi-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+
+        /* 狀態標籤元件：對應 LVGL 的 lv_label + lv_img 組合 */
+        .hmi-status-badge {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1.5px;
+            z-index: 10;
+        }
+
+        /* 數據顯示元件：對應 LVGL 底部排版的 lv_label 群組 */
+        .hmi-data-panel {
+            margin-top: 20px;
+            text-align: center;
+            font-family: var(--font-display);
+            z-index: 20;
+        }
+        .hmi-data-row {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 700;
+            text-shadow: var(--glow-cyan-subtle);
+            transition: color 0.5s, text-shadow 0.5s;
+        }
+        .hmi-data-value {
+            color: var(--text-main);
+            text-shadow: none;
+            font-weight: 400;
+        }
+
+        /* =========================================================
+           3. 元件實例化樣式 (Component Instances)
+        ========================================================= */
+        
+        /* 外圈 WiFi 設定 */
+        .arc-wifi-outer { width: 440px; height: 440px; border-color: var(--primary-cyan); border-style: dashed; }
+        .arc-wifi-inner { width: 340px; height: 340px; border-color: var(--primary-cyan); opacity: 0.6; }
+        .badge-wifi { top: 30px; color: var(--primary-cyan); text-shadow: var(--glow-cyan-subtle); }
+        .row-wifi { color: var(--primary-cyan); text-shadow: var(--glow-cyan-subtle); }
+
+        /* 內圈 BLE 設定 */
+        .arc-ble-inner { width: 260px; height: 260px; border-color: var(--primary-blue); border-style: dashed; opacity: 0.6; }
+        .badge-ble { top: 120px; color: var(--primary-blue); text-shadow: 0 0 8px rgba(17,102,255,0.4); }
+        .row-ble { color: var(--primary-blue); text-shadow: 0 0 8px rgba(17,102,255,0.4); }
+
+        /* 動畫設定 */
+        @keyframes pulse-glow {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+            100% { filter: brightness(1); }
+        }
+        .animate-pulse {
+            animation: pulse-glow 3s infinite alternate ease-in-out;
+        }
+
+        /* 控制按鈕 (模擬實體按鍵或觸控測試用) */
+        .debug-btn {
+            margin-top: 40px;
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--primary-cyan);
+            border: 1px solid var(--primary-cyan);
+            border-radius: 4px;
+            font-family: var(--font-display);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .debug-btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: var(--glow-cyan-subtle);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 
+        [UI Assembly] HMI 視窗組合 
+        這就像 LVGL 的主 Screen (lv_scr_act())
+    -->
+
+    <div class="hmi-widget-ring">
+        
+        <!-- WIFI 外環系統 (對應一組 lv_arc) -->
+        <div class="hmi-arc track arc-wifi-outer"></div>
+        <div class="hmi-arc track arc-wifi-inner"></div>
+        
+        <!-- 使用 SVG 來繪製完美的主弧線，利用 stroke 與 drop-shadow 實現光暈 -->
+        <svg class="hmi-arc indicator animate-pulse" width="400" height="400" viewBox="0 0 400 400" style="transform: translate(-50%, -50%) rotate(135deg);">
+            <defs>
+                <linearGradient id="gradWifi" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="var(--primary-cyan)" />
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0.5" />
+                </linearGradient>
+            </defs>
+            <circle cx="200" cy="200" r="190" fill="none" stroke="var(--primary-cyan)" stroke-width="12" 
+                    stroke-dasharray="895 300" stroke-linecap="round" 
+                    style="filter: drop-shadow(var(--glow-cyan-strong));" />
+        </svg>
+
+        <!-- WIFI 狀態標籤 -->
+        <div class="hmi-status-badge badge-wifi">
+            <span>WIFI</span>
+            <!-- 簡易信號 SVG 圖示 -->
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <rect x="0" y="10" width="3" height="4" />
+                <rect x="5" y="6" width="3" height="8" />
+                <rect x="10" y="2" width="3" height="12" />
+            </svg>
+        </div>
+
+
+        <!-- BLE 內環系統 (對應一組 lv_arc) -->
+        <div class="hmi-arc track arc-ble-inner"></div>
+        
+        <svg class="hmi-arc indicator animate-pulse" width="300" height="300" viewBox="0 0 300 300" style="transform: translate(-50%, -50%) rotate(135deg);">
+            <circle cx="150" cy="150" r="140" fill="none" stroke="var(--primary-blue)" stroke-width="8" 
+                    stroke-dasharray="659 220" stroke-linecap="round" 
+                    style="filter: drop-shadow(var(--glow-blue-strong));" />
+        </svg>
+
+        <!-- BLE 狀態標籤 -->
+        <div class="hmi-status-badge badge-ble">
+            <span>BLE</span>
+            <!-- 簡易波形 SVG 圖示 -->
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M 0 8 L 4 8 L 7 2 L 10 14 L 13 8 L 16 8" />
+            </svg>
+        </div>
+
+
+        <!-- 中心主圖示 (Router/Alert) -->
+        <div class="hmi-icon" id="centerIcon" style="filter: drop-shadow(var(--glow-cyan-strong)); color: var(--primary-cyan);">
+            <svg id="svgRouter" width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="15" y="65" width="70" height="20" rx="8"/>
+                <circle cx="30" cy="75" r="3" fill="currentColor"/>
+                <circle cx="50" cy="75" r="3" fill="currentColor"/>
+                <circle cx="70" cy="75" r="3" fill="currentColor"/>
+                <path d="M 50 65 L 50 25"/>
+                <circle cx="50" cy="22" r="4"/>
+                <path d="M 25 40 A 30 30 0 0 1 75 40"/>
+                <path d="M 10 20 A 55 55 0 0 1 90 20"/>
+            </svg>
+            <svg id="svgAlert" width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                <path d="M 50 10 L 90 85 L 10 85 Z"/>
+                <path d="M 50 35 L 50 60"/>
+                <circle cx="50" cy="75" r="3" fill="currentColor"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- HMI 底部數據面板 -->
+    <div class="hmi-data-panel">
+        <div class="hmi-data-row row-wifi">
+            WiFi: <span class="hmi-data-value" id="valWifi">MedFlow_Office_2.4G (192.168.1.100)</span>
+        </div>
+        <div class="hmi-data-row row-ble">
+            BLE: <span class="hmi-data-value" id="valBle">12 Devices Active</span>
+        </div>
+    </div>
+
+    <button class="debug-btn" onclick="toggleHmiState()">SIMULATE ERROR STATE</button>
+
+    <script>
+        // HMI 狀態切換邏輯 (模擬 MCU 傳來的事件)
+        let isError = false;
+        function toggleHmiState() {
+            isError = !isError;
+            const body = document.body;
+            const btn = document.querySelector('.debug-btn');
+            
+            const iconRouter = document.getElementById('svgRouter');
+            const iconAlert = document.getElementById('svgAlert');
+            const centerIconWrap = document.getElementById('centerIcon');
+            
+            const valWifi = document.getElementById('valWifi');
+            const valBle = document.getElementById('valBle');
+
+            if (isError) {
+                // 套用錯誤主題 (CSS 變數會自動切換顏色與光暈)
+                body.classList.add('status-error');
+                
+                // 切換圖示
+                iconRouter.style.display = 'none';
+                iconAlert.style.display = 'block';
+                centerIconWrap.style.filter = 'drop-shadow(var(--glow-orange-strong))';
+                centerIconWrap.style.color = 'var(--alert-orange)';
+                
+                // 更新文字數值
+                valWifi.innerText = "Disconnected";
+                valBle.innerText = "Driver Error (Retry 3)";
+                
+                btn.innerText = "SIMULATE NORMAL STATE";
+                btn.style.borderColor = 'var(--alert-orange)';
+                btn.style.color = 'var(--alert-orange)';
+            } else {
+                body.classList.remove('status-error');
+                
+                iconRouter.style.display = 'block';
+                iconAlert.style.display = 'none';
+                centerIconWrap.style.filter = 'drop-shadow(var(--glow-cyan-strong))';
+                centerIconWrap.style.color = 'var(--primary-cyan)';
+                
+                valWifi.innerText = "MedFlow_Office_2.4G (192.168.1.100)";
+                valBle.innerText = "12 Devices Active";
+                
+                btn.innerText = "SIMULATE ERROR STATE";
+                btn.style.borderColor = 'var(--primary-cyan)';
+                btn.style.color = 'var(--primary-cyan)';
+            }
+        }
+    </script>
+</body>
+</html>

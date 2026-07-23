@@ -1,0 +1,121 @@
+;--------------------------------------------------------
+;
+;	Communication Device Class
+;	Virtual Serial Port
+;	
+;	Copyright (c) Hcc Embedded.  All rights reserved.
+;
+;--------------------------------------------------------
+
+
+[Version] 
+Signature="$Windows NT$" 
+Class=Ports
+ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318} 
+Provider=%PROVIDER% 
+DriverVer=08/04/2010,2.0.0.0
+CatalogFile=mycat.cat
+
+[Manufacturer] 
+%DEVICE_DESCRIPTION%=DeviceList, NTx86, NTia64, NTamd64
+
+[DeviceList.NTx86] 
+%DEVICE_DESCRIPTION%=DriverInstall, USB\Class_02&SubClass_02&Prot_01
+%DEVICE_DESCRIPTION%=DriverInstall, USB\Class_02&SubClass_02&Prot_00
+
+[DeviceList.NTia64] 
+%DEVICE_DESCRIPTION%=DriverInstall, USB\Class_02&SubClass_02&Prot_01
+%DEVICE_DESCRIPTION%=DriverInstall, USB\Class_02&SubClass_02&Prot_00
+
+[DeviceList.NTamd64] 
+%DEVICE_DESCRIPTION%=DriverInstall, USB\Class_02&SubClass_02&Prot_01
+%DEVICE_DESCRIPTION%=DriverInstall, USB\Class_02&SubClass_02&Prot_00
+
+;------------------------------------------------------------------------------
+;  Installation Configuration
+;------------------------------------------------------------------------------
+
+; Windows 2000/XP/Vista/7 32-bit
+
+[DriverInstall.NT]
+include = mdmcpq.inf
+CopyFiles = FakeModemCopyFileSection
+AddReg = DriverInstall.NT.AddReg
+
+[DriverInstall.NT.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,usbser.sys
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+; Windows Vista/7 amd64-bit
+
+[DriverInstall.NTamd64]
+include = mdmcpq.inf
+CopyFiles = FakeModemCopyFileSection
+AddReg = DriverInstall.NTamd64.AddReg
+
+[DriverInstall.NTamd64.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,usbser.sys
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+; Windows Vista/7 ia64-bit
+
+[DriverInstall.NTia64]
+include = mdmcpq.inf
+CopyFiles = FakeModemCopyFileSection
+AddReg = DriverInstall.NTia64.AddReg
+
+[DriverInstall.NTia64.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,usbser.sys
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+;------------------------------------------------------------------------------
+;  Usbser Service
+;------------------------------------------------------------------------------
+
+[DriverInstall.NT.Services]
+include = mdmcpq.inf
+AddService = usbser,0x00000002,LowerFilter_Service_Inst
+
+[DriverInstall.NTamd64.Services]
+include = mdmcpq.inf
+AddService = usbser,0x00000002,LowerFilter_Service_Inst
+
+[DriverInstall.NTia64.Services]
+include = mdmcpq.inf
+AddService = usbser,0x00000002,LowerFilter_Service_Inst
+
+;------------------------------------------------------------------------------
+;  dir/ files section
+;------------------------------------------------------------------------------
+
+[SourceDisksNames]
+;3426=windows cd	not need!
+
+[SourceDisksNames.amd64]
+;3426=windows cd	not need!
+
+[SourceDisksFiles]
+; use Windows built-in usbser.sys = 3426 (signed by MS)
+
+[SourceDisksFiles.amd64]
+; use Windows built-in usbser.sys = 3426 (signed by MS)
+
+[SourceDisksFiles.ia64]
+; use Windows built-in usbser.sys = 3426 (signed by MS)
+
+[DestinationDirs]
+FakeModemCopyFileSection=12
+DefaultDestDir = 12
+
+
+;------------------------------------------------------------------------------
+;  String Definitions
+;------------------------------------------------------------------------------
+
+[Strings] 
+PROVIDER="HCC Embedded"
+DEVICE_DESCRIPTION ="CDC Device"
+USBSER.DESC = "USB Serial Driver"

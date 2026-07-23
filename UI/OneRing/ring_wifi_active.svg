@@ -1,0 +1,46 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+        <filter id="glow_base" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.5" result="blur1" />
+        <feGaussianBlur stdDeviation="4" result="blur2" />
+        <feGaussianBlur stdDeviation="10" result="blur3" />
+        <feMerge>
+            <feMergeNode in="blur3" />
+            <feMergeNode in="blur2" />
+            <feMergeNode in="blur1" />
+            <feMergeNode in="SourceGraphic" />
+        </feMerge>
+    </filter>
+        <linearGradient id="gradWifi" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00ddff" />
+            <stop offset="50%" stop-color="#00ffff" />
+            <stop offset="100%" stop-color="#88ffff" />
+        </linearGradient>
+        <linearGradient id="gradBle" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0044ff" />
+            <stop offset="50%" stop-color="#1166ff" />
+            <stop offset="100%" stop-color="#4488ff" />
+        </linearGradient>
+    </defs>
+            <g transform="translate(250,250)">
+                <!-- 外層細虛線 -->
+                <circle r="185" fill="none" stroke="#00ffff" stroke-width="1.5" 
+                        stroke-dasharray="15 30" opacity="0.6" transform="rotate(135)" />
+                <!-- 主粗線 (青色) -->
+                <circle r="165" fill="none" stroke="url(#gradWifi)" stroke-width="10" 
+                        stroke-dasharray="777.5 259.1" stroke-linecap="round" 
+                        transform="rotate(135)" filter="url(#glow_base)" />
+                <!-- 內層細實線 -->
+                <circle r="148" fill="none" stroke="#00ffff" stroke-width="1.5" 
+                        stroke-dasharray="697.4 232.4" stroke-linecap="round" 
+                        transform="rotate(135)" opacity="0.8" />
+                        
+                <!-- 上方 WIFI 標籤與信號圖示 -->
+                <text x="0" y="-168" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="14" text-anchor="middle" letter-spacing="1">WIFI</text>
+                <g transform="translate(25, -178)" fill="#00ffff">
+                    <rect x="0" y="8" width="3" height="4" />
+                    <rect x="5" y="4" width="3" height="8" />
+                    <rect x="10" y="0" width="3" height="12" />
+                </g>
+            </g>
+        </svg>

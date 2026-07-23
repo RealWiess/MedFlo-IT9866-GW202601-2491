@@ -1,0 +1,38 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+        <filter id="glow_base" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.5" result="blur1" />
+        <feGaussianBlur stdDeviation="4" result="blur2" />
+        <feGaussianBlur stdDeviation="10" result="blur3" />
+        <feMerge>
+            <feMergeNode in="blur3" />
+            <feMergeNode in="blur2" />
+            <feMergeNode in="blur1" />
+            <feMergeNode in="SourceGraphic" />
+        </feMerge>
+    </filter>
+        <linearGradient id="gradWifi" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00ddff" />
+            <stop offset="50%" stop-color="#00ffff" />
+            <stop offset="100%" stop-color="#88ffff" />
+        </linearGradient>
+        <linearGradient id="gradBle" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0044ff" />
+            <stop offset="50%" stop-color="#1166ff" />
+            <stop offset="100%" stop-color="#4488ff" />
+        </linearGradient>
+    </defs>
+            <g transform="translate(250, 260)" stroke="#00ffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow_base)">
+                <!-- 路由器機身 -->
+                <rect x="-35" y="0" width="70" height="16" rx="8"/>
+                <circle cx="-15" cy="8" r="2.5" fill="#00ffff"/>
+                <circle cx="0" cy="8" r="2.5" fill="#00ffff"/>
+                <circle cx="15" cy="8" r="2.5" fill="#00ffff"/>
+                <!-- 天線 -->
+                <path d="M 0 0 L 0 -25"/>
+                <circle cx="0" cy="-28" r="3"/>
+                <!-- 信號波紋 -->
+                <path d="M -15 -18 A 20 20 0 0 1 15 -18"/>
+                <path d="M -30 -30 A 40 40 0 0 1 30 -30"/>
+            </g>
+        </svg>
